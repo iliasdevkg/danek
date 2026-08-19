@@ -1,36 +1,183 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# УВК «ДАНЕК» — сайт и CRM
 
-## Getting Started
+Сайт учебно-воспитательного комплекса «ДАНЕК» (Бишкек) и внутренняя система
+управления школой: приём заявок, ученики, журнал, расписание, оплата.
 
-First, run the development server:
+Три языка: кыргызский, русский, английский. Публичные страницы отдаются
+статикой с CDN, кабинеты за логином — динамикой с проверкой роли.
+
+**Демонстрация витрины:** https://danek-gilt.vercel.app
+
+---
+
+## Что внутри
+
+| Раздел | Адрес | Кто видит |
+| --- | --- | --- |
+| Витрина | `/[locale]` | все |
+| CRM | `/[locale]/crm` | администратор, менеджер, учитель |
+| Кабинет родителя | `/[locale]/parent` | родитель |
+| Кабинет ученика | `/[locale]/student` | ученик |
+
+Стек: Next.js 16 (App Router, React Compiler), TypeScript strict, Tailwind CSS 4,
+Supabase (Postgres + Auth + Storage), Radix UI, Playwright для проверок.
+
+---
+
+## Запуск: только витрина
+
+Быстрый путь — посмотреть сайт. База не нужна: без ключей Supabase витрина
+показывает демонстрационное содержимое из `lib/content/demo.ts`.
+
+```bash
+npm install
+npm run dev
+```
+
+Открыть http://localhost:3000/ru
+
+---
+
+## Запуск: витрина и CRM
+
+Кабинетам нужна база. Локально она поднимается в контейнерах.
+
+**1. Контейнеры.** Подойдёт Docker Desktop; ниже — вариант полегче:
+
+```bash
+brew install colima docker
+colima start --cpu 4 --memory 6 --disk 25
+```
+
+**2. Supabase, миграции и демонстрационные данные:**
+
+```bash
+npx supabase start        # база, авторизация, хранилище
+npx supabase db reset     # миграции + supabase/seed.sql
+node scripts/seed-storage.mjs   # фотографии в бакет media
+```
+
+**3. Ключи.** `npx supabase start` печатает их в конце. Положить в `.env.local`
+(шаблон — `.env.example`):
+
+```
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<PUBLISHABLE_KEY из вывода>
+SUPABASE_SECRET_KEY=<SECRET_KEY из вывода>
+```
+
+**4. Приложение:**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Учётные записи заводит `supabase/seed.sql`, пароль у всех `danek2026`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Роль | Почта | Что видит |
+| --- | --- | --- |
+| Администратор | `director@danek.local` | всю CRM |
+| Менеджер | `manager@danek.local` | приём и финансы |
+| Учитель | `teacher@danek.local` | журнал своих классов |
+| Родитель | `parent@danek.local` | дневник и оплату своего ребёнка |
+| Ученик | `student@danek.local` | свои оценки |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Панель Supabase — http://127.0.0.1:54323, почта разработки — http://127.0.0.1:54324
 
-## Learn More
+Остановить: `npx supabase stop` и `colima stop`.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Команды
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Команда | Что делает |
+| --- | --- |
+| `npm run dev` | разработка |
+| `npm run build` | сборка |
+| `npm run typecheck` | TypeScript без единой ошибки |
+| `npm run lint` | ESLint |
+| `npm run format` | Prettier |
+| `npm run qa` | браузерная проверка: адаптив на 9 ширинах × 3 языка × 9 страниц, контраст WCAG AA в обеих темах, LCP и CLS на медленном телефоне |
+| `node scripts/showcase.mjs <url> <dir>` | скриншоты всех страниц |
+| `node scripts/viewport-shots.mjs <url> <dir>` | скриншоты с настоящей прокруткой |
 
-## Deploy on Vercel
+`npm run qa` требует запущенной сборки:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run build && npx next start -p 3111 &
+npm run qa -- http://localhost:3111
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Структура
+
+```
+app/[locale]/(site)     публичные страницы
+app/[locale]/crm        CRM
+app/[locale]/parent     кабинет родителя
+app/[locale]/student    кабинет ученика
+components/site         блоки витрины
+components/crm          интерфейс CRM
+components/ui           примитивы (кнопки, поля, диалоги)
+lib/content             чтение контента из Supabase + демо-набор
+lib/i18n/dictionaries   ky.ts, ru.ts, en.ts — весь текст сайта
+lib/actions             серверные действия (формы, изменения данных)
+supabase/migrations     схема базы
+supabase/seed.sql       демонстрационные данные
+assets/images           фотографии витрины
+```
+
+Весь видимый текст живёт в словарях. Тип `Dictionary` выводится из `ru.ts`,
+поэтому пропущенный ключ в `ky.ts` или `en.ts` — ошибка компиляции, а не
+пустое место на странице у родителя.
+
+---
+
+## Оформление
+
+Палитра взята с эмблемы школы: тёмно-синий круг с зелёным ростком.
+Синий — навигация и структура, зелёный — рост и учёба, золото — действие.
+Золотом на витрине покрашено ровно одно: «отсюда начинается приём».
+
+Фирменная форма — арка: она держит фотографии на обложке, карточки ступеней
+и портреты педагогов.
+
+Движение — только CSS: появление при прокрутке через `animation-timeline: view()`,
+наведение через `transform` и `opacity`. Ни одного обработчика скролла в JS,
+ни одного анимируемого свойства раскладки — поэтому страница не дёргается
+на недорогом телефоне.
+
+---
+
+## Демонстрационный режим
+
+Пока в окружении нет ключей Supabase, витрина показывает содержимое из
+`lib/content/demo.ts`: педагогов, новости, галерею и цифры. Это нужно, чтобы
+сайт можно было показать до того, как школа заполнит CRM.
+
+Два предохранителя:
+
+- демо включается **только** без Supabase — подставили ключи, и сайт отдаёт
+  данные школы, ничего кроме них;
+- в демо-режиме `robots.txt` и мета-тег закрывают сайт от индексации:
+  вымышленные педагоги и отзывы не должны попасть в поиск как сведения
+  о настоящей школе.
+
+Выключить демо принудительно: `NEXT_PUBLIC_DEMO_CONTENT=off`.
+
+---
+
+## Что нужно уточнить у школы
+
+- **Диапазон классов.** В шапке Instagram — «1–9 классы», в объявлениях
+  о наборе — 1–10 и отдельно 8–10. В коде стоит 1–10 (`SCHOOL.gradeTo`
+  в `lib/site.ts`); от этого зависят список классов в форме заявки и тексты
+  на витрине.
+- **Адрес, почта и цены.** Намеренно не заполнены: настоящих значений нет,
+  а по выдуманному адресу родитель поедет. Блоки не рисуются, пока школа
+  не внесёт данные через CRM.
+- **Фотографии.** Сейчас стоят снимки со свободной лицензией (Unsplash).
+  Их заменят фотографии школы — через раздел «Контент сайта».
+- **Имена педагогов и отзывы** в демонстрационном наборе вымышлены и
+  заменяются первыми.
