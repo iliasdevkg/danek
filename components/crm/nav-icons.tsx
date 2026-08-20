@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  UserRoundCheck,
   BarChart3,
   Calendar,
   ClipboardList,
@@ -34,7 +35,7 @@ export const CRM_NAV_ICONS: Record<CrmNavKey, ComponentType<{ className?: string
   applications: ClipboardList,
   students: GraduationCap,
   classes: Users,
-  teachers: Users,
+  teachers: UserRoundCheck,
   schedule: Calendar,
   journal: BarChart3,
   finance: Wallet,

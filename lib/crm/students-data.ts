@@ -18,7 +18,7 @@ type ListRow = {
   status: StudentStatus;
   enrolled_on: string;
   classes: { id: string; grade_level: number; letter: string } | null;
-  student_guardians: { guardian_id: string }[] | null;
+  student_guardians: { count: number }[] | null;
 };
 
 /**
@@ -37,7 +37,7 @@ export async function getStudentsList(filters: {
   let query = supabase
     .from("students")
     .select(
-      "id, full_name, status, enrolled_on, classes(id, grade_level, letter), student_guardians(guardian_id)",
+      "id, full_name, status, enrolled_on, classes(id, grade_level, letter), student_guardians(count)",
     )
     .order("full_name", { ascending: true });
 
@@ -60,7 +60,7 @@ export async function getStudentsList(filters: {
     class: row.classes
       ? { id: row.classes.id, gradeLevel: row.classes.grade_level, letter: row.classes.letter }
       : null,
-    guardianCount: row.student_guardians?.length ?? 0,
+    guardianCount: row.student_guardians?.[0]?.count ?? 0,
   }));
 }
 
