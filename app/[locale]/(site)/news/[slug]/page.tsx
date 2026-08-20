@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, CalendarDays, ChevronRight } from "lucide-react";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 
 import { CtaBand } from "@/components/site/cta-band";
 import { Photo } from "@/components/site/photo";
@@ -67,16 +67,36 @@ export default async function NewsArticlePage({ params }: PageProps<"/[locale]/n
 
   const page = t.newsPage;
 
-  // Текст хранится обычными абзацами через пустую строку. Никакого HTML из базы
-  // в разметку не попадает — межсайтовый скриптинг здесь невозможен.
-  const paragraphs = article.body
+  /*
+   * Текст хранится обычными абзацами через пустую строку. Никакого HTML из базы
+   * в разметку не попадает — межсайтовый скриптинг здесь невозможен.
+   *
+   * Единственная разметка, которую понимает редактор, — угловая скобка в начале
+   * абзаца: такой абзац выносится из колонки крупной цитатой. Приём взят
+   * из почтовых цитат и из markdown, то есть уже знаком тому, кто пишет
+   * новости, и не требует ни редактора, ни отдельного поля в базе.
+   */
+  const blocks = article.body
     .split(/\n{2,}/)
     .map((block) => block.trim())
-    .filter(Boolean);
+    .filter(Boolean)
+    .map((block) =>
+      block.startsWith(">")
+        ? ({ kind: "quote", text: block.replace(/^>\s?/gm, "").trim() } as const)
+        : ({ kind: "text", text: block } as const),
+    );
 
   return (
     <>
-      <article>
+      {/*
+       * Таймлайн объявлен на всей статье, а не на колонке текста. У короткой
+       * новости колонка ниже экрана, и диапазон `contain` для неё сводится
+       * к паре сотен пикселей: полоса дозаполнялась бы к середине страницы.
+       * Статья целиком — вместе с шапкой, обложкой и ссылкой назад — всегда
+       * выше экрана, и её `contain` это ровно путь от начала до конца чтения.
+       * Приглашение и подвал в таймлайн не входят намеренно: они уже не статья.
+       */}
+      <article className="fx-read-track">
         {/*
          * Шапка стоит на тонированной плашке, а обложка наезжает на её нижний
          * край. Так статья открывается одним кадром: дата, заголовок и снимок
@@ -122,8 +142,13 @@ export default async function NewsArticlePage({ params }: PageProps<"/[locale]/n
                   `paper-raised`: в тёмной теме тот отличается от `paper-tint`
                   на пару единиц яркости и исчезает совсем. Рамка держит край
                   в обеих темах, где одной тени не хватает. */}
-              <p className="chip border-rule text-ink shadow-soft bg-paper border">
-                <CalendarDays className="text-highlight size-3.5" aria-hidden="true" />
+              {/* Дата статьи набрана строкой с чертой, а не пилюлей с
+                  календариком: пилюля выглядела ярлыком, приклеенным к тексту,
+                  а дата у новости — часть самой новости. Тот же приём стоит
+                  на карточках в ленте, так что переход со списка в статью
+                  не меняет интонацию. */}
+              <p className="text-caption text-ink-muted inline-flex items-center gap-3">
+                <span aria-hidden="true" className="bg-accent h-px w-6" />
                 <span className="sr-only">{page.published}: </span>
                 <time dateTime={article.publishedAt} data-numeric>
                   {formatDate(article.publishedAt, locale)}
@@ -140,8 +165,11 @@ export default async function NewsArticlePage({ params }: PageProps<"/[locale]/n
         </header>
 
         {article.coverUrl ? (
+          /* Обложка шире колонки текста и шире прежних 896 пикселей: это первый
+             кадр статьи, и он должен работать разворотом, а не иллюстрацией
+             к абзацу. На телефоне пропорция ниже — 16:9 там уже почти полоска. */
           <div className="shell relative -mt-16 md:-mt-24">
-            <figure className="border-paper bg-paper-sunken shadow-float relative mx-auto aspect-16/9 max-w-4xl overflow-hidden rounded-2xl border-4">
+            <figure className="border-paper bg-paper-sunken shadow-float relative mx-auto aspect-4/3 max-w-5xl overflow-hidden rounded-2xl border-4 sm:aspect-16/9">
               {/* Обложка — первый экран статьи и её LCP. Alt пустой намеренно:
                   снимок дублирует заголовок, стоящий строкой выше, и озвучивать
                   его второй раз скринридеру нечем. */}
@@ -149,22 +177,50 @@ export default async function NewsArticlePage({ params }: PageProps<"/[locale]/n
                 src={article.coverUrl}
                 alt=""
                 priority
-                sizes="(min-width: 960px) 896px, 100vw"
+                sizes="(min-width: 1088px) 1024px, 100vw"
               />
             </figure>
           </div>
         ) : null}
 
-        {paragraphs.length > 0 ? (
+        {blocks.length > 0 ? (
           <div className="shell pt-12 md:pt-16">
+            {/* Полоса дочитанного прилипает к нижнему краю шапки, а не к верху
+                экрана: у верха уже живёт волосяная линия общей прокрутки, и две
+                полосы друг на друге читались бы как сбой. Ширина полосы —
+                чистый scaleX по таймлайну прокрутки, ни одного обработчика. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none fixed inset-x-0 top-18 z-40 h-[3px] md:top-20"
+            >
+              <div className="bg-accent fx-read h-full w-full" />
+            </div>
+
             {/* Мера строки — те самые 68ch из токенов: читать статью в ширину
                 страницы невозможно, глаз теряет начало следующей строки. */}
             <div className="mx-auto flex max-w-prose flex-col gap-5">
-              {paragraphs.map((paragraph, index) => (
-                <p key={index} className="text-body text-ink">
-                  {paragraph}
-                </p>
-              ))}
+              {blocks.map((block, index) =>
+                block.kind === "quote" ? (
+                  /*
+                   * Цитата выходит за колонку влево и набрана дисплейным
+                   * шрифтом: она обязана читаться как остановка в тексте,
+                   * а не как ещё один абзац покрупнее. Кавычки рисует
+                   * базовый стиль `q` по языку страницы — «ёлочки» для ru/ky,
+                   * “лапки” для en.
+                   */
+                  <figure key={index} className="my-4 lg:-ml-16">
+                    <blockquote className="border-gold text-ink border-l-4 pl-6 md:pl-8">
+                      <p className="font-display text-[clamp(1.25rem,1rem+1.1vw,1.75rem)] leading-[1.3] font-bold tracking-[-0.02em]">
+                        <q>{block.text}</q>
+                      </p>
+                    </blockquote>
+                  </figure>
+                ) : (
+                  <p key={index} className="text-body text-ink">
+                    {block.text}
+                  </p>
+                ),
+              )}
             </div>
           </div>
         ) : null}

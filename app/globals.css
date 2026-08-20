@@ -806,7 +806,7 @@
  * приходится пролистывать вслепую. Страница и без того длинная.
  */
 @utility section-y {
-  padding-block: --spacing(12);
+  padding-block: --spacing(10);
 
   @media (width >= 40rem) {
     padding-block: --spacing(16);
@@ -818,7 +818,7 @@
 }
 
 @utility section-t {
-  padding-top: --spacing(12);
+  padding-top: --spacing(10);
 
   @media (width >= 40rem) {
     padding-top: --spacing(16);
@@ -1159,6 +1159,433 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Раскрывающийся список
+
+   На телефоне видно первые несколько пунктов, остальное — по нажатию.
+   Смысл не в экономии как таковой: страница с десятью разделами подряд
+   на узком экране идёт на шестнадцать тысяч пикселей, и раздел, до которого
+   родитель доскроллил на восьмом экране, он читает уже вслепую.
+
+   Реализовано на скрытом чекбоксе и `:has()`, а не на скрипте. Причина не
+   в принципе, а в цене: любая кнопка «показать ещё» на React — это клиентский
+   компонент, гидратация и состояние ради `display: none`. Здесь то же самое
+   делает браузер, и работает оно до загрузки хоть одного килобайта JS.
+
+   На планшете и шире раскрытие отключается совсем: там место есть, и прятать
+   содержимое незачем.
+   --------------------------------------------------------------------------- */
+
+.more-list > .more-items > *:nth-child(n + 4) {
+  display: none;
+}
+
+.more-list:has(> .more-check:checked) > .more-items > *:nth-child(n + 4) {
+  display: revert;
+}
+
+.more-list:has(> .more-check:checked) > .more-button {
+  display: none;
+}
+
+/* Вариант «показать после второго» — для сеток в две колонки. */
+.more-list[data-visible="1"] > .more-items > *:nth-child(n + 2) {
+  display: none;
+}
+
+.more-list[data-visible="1"]:has(> .more-check:checked) > .more-items > *:nth-child(n + 2) {
+  display: revert;
+}
+
+.more-list[data-visible="2"] > .more-items > *:nth-child(n + 3) {
+  display: none;
+}
+
+.more-list[data-visible="2"]:has(> .more-check:checked) > .more-items > *:nth-child(n + 3) {
+  display: revert;
+}
+
+@media (width >= 48rem) {
+  /*
+   * `:nth-child(n)` здесь не для отбора — он отбирает вообще всё, — а ради
+   * веса селектора. Правило, которое прячет, весит на один класс больше;
+   * без этой добавки оно побеждало бы и на широком экране, и половина
+   * содержимого молча пропадала бы там, где кнопки раскрытия уже нет.
+   */
+  .more-list > .more-items > *:nth-child(n),
+  .more-list[data-visible="1"] > .more-items > *:nth-child(n),
+  .more-list[data-visible="2"] > .more-items > *:nth-child(n) {
+    display: revert;
+  }
+
+  .more-list > .more-button {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Лесенка обещаний
+
+   Пять пунктов под обложкой стояли пятью одинаковыми плитками с иконкой
+   в углу — ровно та сетка карточек, которая есть на любом школьном сайте.
+
+   Вертикальный нумерованный реестр сюда не годится, хотя первым просится
+   именно он: такой реестр уже стоит ниже на этой же странице — раздел
+   «Принципы» с крупной цифрой, волосяной линейкой и воздухом. Повторить
+   приём через один экран значит вернуться ровно к тому, из-за чего всё
+   и затевалось: два разных разговора одной интонацией.
+
+   Поэтому здесь ряд, а не столбец. Пять колонок, но верхние кромки идут
+   вниз уступом — из отрезков линеек складывается профиль лестницы. Номер
+   мелкий и сидит прямо на линейке подписью к отрезку, как в чертеже:
+   крупные цифры остаются за «Принципами», и две секции больше ни в чём
+   не похожи. Зелёный входной отрезок — единственная цветная метка колонки;
+   он нарисован градиентом внутри самой линии и не стоит лишнего узла.
+
+   Ряд намеренно не выровнен по низу. Кыргызский заголовок длиннее русского
+   почти на треть и уходит в лишнюю строку — при рваном низе это часть
+   композиции, а не поломка.
+   --------------------------------------------------------------------------- */
+
+.feature-steps {
+  --step: 0rem;
+  counter-reset: fstep;
+  view-timeline: --steps block;
+}
+
+.feature-step {
+  position: relative;
+  counter-increment: fstep;
+  /*
+   * Ступень — `margin-block-start`, а не `transform`.
+   *
+   * Соблазн сдвинуть трансформом велик: он не трогает поток. Ровно поэтому
+   * он и не годится — не резервируя места, пятая колонка наехала бы на
+   * следующий раздел. Отступ же считается при первой раскладке и больше
+   * не меняется никогда, то есть стоит ноль по CLS.
+   */
+  margin-block-start: calc(var(--step) * var(--i, 0));
+}
+
+.feature-step::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, var(--accent) 0 1.5rem, var(--rule) 1.5rem);
+  transform-origin: 0 50%;
+}
+
+/* `decimal-leading-zero` сам добавляет ноль: 01, 02 … 10 остаётся десятью.
+   Номер рисует счётчик, а не разметка: порядок и без того объявлен тегом
+   `<ol>`, и озвучивать скринридеру «ноль один» вторым голосом незачем. */
+.feature-num::after {
+  content: counter(fstep, decimal-leading-zero);
+}
+
+@media (hover: hover) {
+  /* Наведение отзывается только номером и только цветом: зелёный на витрине
+     означает ссылку, и заголовок, зеленеющий под курсором, обещал бы
+     переход, которого здесь нет. */
+  .feature-step:hover .feature-num {
+    color: var(--accent);
+  }
+}
+
+/*
+ * Ступени включаются только там, где все пять колонок стоят в один ряд.
+ * `--i` — сквозной индекс по всем пяти пунктам, а не по строке: на двух
+ * и трёх колонках четвёртый пункт получил бы отступ в три-четыре шага,
+ * и вторая строка отвалилась бы от первой пустой полосой.
+ */
+@media (width >= 80rem) {
+  .feature-steps {
+    --step: 1.75rem;
+  }
+}
+
+@keyframes fx-settle {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -1rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .feature-step::before {
+      transform: scaleX(0);
+      animation: fx-progress linear both;
+      animation-timeline: --steps;
+    }
+
+    .feature-body {
+      animation: fx-settle linear both;
+      animation-timeline: --steps;
+    }
+
+    /*
+     * Таймлайн один на весь список, а не свой у каждой колонки: пять колонок
+     * одного ряда входят в кадр одновременно, и с личными таймлайнами
+     * никакой очереди бы не получилось. Очередь расписана пятью парами
+     * правил, а не вычислением внутри `animation-range`: пунктов ровно пять,
+     * а этот кусок спецификации поддержан хуже всего остального.
+     *
+     * Содержимое оседает сверху вниз — единственное движение на сайте,
+     * идущее в эту сторону. Сразу после полноэкранной обложки это читается
+     * как титры, легшие на изображение.
+     */
+    .feature-step:nth-child(1)::before {
+      animation-range: entry 6% entry 32%;
+    }
+    .feature-step:nth-child(2)::before {
+      animation-range: entry 14% entry 40%;
+    }
+    .feature-step:nth-child(3)::before {
+      animation-range: entry 22% entry 48%;
+    }
+    .feature-step:nth-child(4)::before {
+      animation-range: entry 30% entry 56%;
+    }
+    .feature-step:nth-child(5)::before {
+      animation-range: entry 38% entry 64%;
+    }
+
+    .feature-step:nth-child(1) .feature-body {
+      animation-range: entry 12% entry 58%;
+    }
+    .feature-step:nth-child(2) .feature-body {
+      animation-range: entry 20% entry 66%;
+    }
+    .feature-step:nth-child(3) .feature-body {
+      animation-range: entry 28% entry 74%;
+    }
+    .feature-step:nth-child(4) .feature-body {
+      animation-range: entry 36% entry 82%;
+    }
+    .feature-step:nth-child(5) .feature-body {
+      animation-range: entry 44% entry 90%;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Портретная колоннада
+
+   Сетка педагогов была ровной таблицей из одинаковых прямоугольников
+   с подписями по центру. Ровная — то есть безликая: восемь одинаковых
+   плиток читаются как выгрузка из каталога, а не как люди, которые учат.
+
+   Теперь это колоннада. Портреты стоят в арках — единственной фирменной
+   форме в этой системе: она взята с эмблемы школы, где росток заключён
+   в круг, и до сих пор ни разу не держала лицо человека. Арки разной
+   высоты, но все упираются в одну землю: подписи из-за этого остаются
+   на одной линии, а верхние кромки дают силуэт, которого прямоугольная
+   сетка не даёт в принципе.
+
+   Разная высота — не случайность и не мозаика. Ритм на три такта, а не
+   на два: при четырёх колонках двухтактный рисунок повторился бы дважды
+   в ряду и снова стал бы решёткой.
+
+   Высоту держит слот с фиксированной пропорцией, а внутри него портрет
+   занимает долю этой высоты. Значит, место под каждую карточку известно
+   до загрузки снимков — ни одного сдвига раскладки.
+
+   Отдельно: портреты входят в кадр обесцвеченными и набирают цвет, пока
+   поднимаются в экран. Это не наведение — на телефоне наведения нет вовсе,
+   а эффект нужен именно там, где сетку листают пальцем. Конечное состояние
+   полностью цветное, поэтому там, где scroll-driven анимаций нет, портреты
+   просто цветные с самого начала: не теряется ничего.
+   --------------------------------------------------------------------------- */
+
+.teacher-slot {
+  display: grid;
+  align-items: end;
+  aspect-ratio: 5 / 7;
+}
+
+.teacher-slot > * {
+  block-size: 100%;
+}
+
+.teacher-grid > *:nth-child(3n + 2) .teacher-slot > * {
+  block-size: 87%;
+}
+
+.teacher-grid > *:nth-child(3n + 3) .teacher-slot > * {
+  block-size: 94%;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .portrait-reveal {
+      animation: portrait-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 15% cover 32%;
+    }
+  }
+}
+
+@keyframes portrait-reveal {
+  from {
+    opacity: 0.5;
+    filter: grayscale(1) contrast(1.08);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Свод из огней
+
+   Иллюстрация для пустых разделов витрины. Проводится земля, от вершины
+   в обе стороны прочерчивается арка, и на ней загораются огни — сначала
+   верхний, потом свет расходится к краям.
+
+   Арка здесь не украшение: это форма с эмблемы школы, та же, в которой
+   стоят портреты педагогов (`.teacher-slot`). Огни — дети, каждый
+   отдельный; земля — то общее, на чём всё держится.
+
+   Геометрия посчитана, а не подобрана на глаз: все семь огней лежат на
+   окружности с центром (50, 76) и радиусом 36, под углами 180° 150° 120°
+   90° 60° 30° 0°. Поэтому свод симметричен точно, а не приблизительно,
+   а длины дуг в `stroke-dasharray` — это настоящие πr/2 ≈ 56.5.
+
+   Анимация играет ОДИН раз и останавливается: зацикленная картинка на
+   странице, куда человек попал и остался читать, начинает мешать через
+   минуту. Ни одного килобайта скриптов — только `@keyframes`, и двигаются
+   лишь `transform`, `opacity` и `stroke-dashoffset`, то есть ни одного
+   пересчёта раскладки.
+
+   Конечное состояние — законченный рисунок. Там, где анимации отключены
+   или не поддержаны, иллюстрация просто видна целиком.
+   --------------------------------------------------------------------------- */
+
+.vault-ground {
+  stroke-dasharray: 76;
+  stroke-dashoffset: 76;
+  animation: vault-draw 560ms var(--ease-entrance) both;
+}
+
+.vault-half {
+  stroke-dasharray: 57;
+  stroke-dashoffset: 57;
+  animation: vault-draw 900ms var(--ease-entrance) 560ms both;
+}
+
+/*
+ * `transform-box: fill-box` обязателен. Без него `transform-origin: center`
+ * у элемента SVG считается от системы координат viewBox, а не от самой
+ * фигуры, и огонь не вырастал бы на месте, а приезжал бы из центра рисунка.
+ */
+.vault-light {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: vault-pop 560ms var(--ease-spring) both;
+}
+
+.vault-l0 {
+  animation-delay: 620ms;
+}
+.vault-l1 {
+  animation-delay: 800ms;
+}
+.vault-l2 {
+  animation-delay: 960ms;
+}
+.vault-l3 {
+  animation-delay: 1120ms;
+}
+
+@keyframes vault-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes vault-pop {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/*
+ * Второй способ проигрывания — по прокрутке.
+ *
+ * В пустом разделе рисунок стоит вверху страницы, и одного прогона по
+ * загрузке достаточно: его увидят. В приглашении внизу страницы — нет:
+ * пока родитель доскроллит, анимация давно закончится, и он получит
+ * готовую картинку, ни разу её не увидев.
+ *
+ * Поэтому там таймлайн — сама прокрутка. Очередь задаётся диапазонами,
+ * а не задержками: при таймлайне прокрутки `animation-delay` в миллисекундах
+ * не значит ничего, и его приходится обнулять явно — иначе он остаётся
+ * от варианта по загрузке и молча ломает очередь.
+ *
+ * Где scroll-driven не поддержан, `@supports` не срабатывает и остаётся
+ * обычный прогон по загрузке. Ничего не пропадает.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .vault-scroll {
+      view-timeline: --vault block;
+    }
+
+    .vault-scroll .vault-ground,
+    .vault-scroll .vault-half,
+    .vault-scroll .vault-light {
+      animation-timeline: --vault;
+      animation-delay: 0s;
+      animation-duration: auto;
+    }
+
+    .vault-scroll .vault-ground {
+      animation-range: entry 10% entry 40%;
+    }
+
+    .vault-scroll .vault-half {
+      animation-range: entry 26% entry 64%;
+    }
+
+    .vault-scroll .vault-l0 {
+      animation-range: entry 46% entry 62%;
+    }
+
+    .vault-scroll .vault-l1 {
+      animation-range: entry 54% entry 70%;
+    }
+
+    .vault-scroll .vault-l2 {
+      animation-range: entry 62% entry 78%;
+    }
+
+    .vault-scroll .vault-l3 {
+      animation-range: entry 70% entry 86%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vault-ground,
+  .vault-half,
+  .vault-light {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Кинематографические эффекты прокрутки
 
    Всё здесь построено на scroll-driven анимациях: прогресс задаёт сама
@@ -1408,6 +1835,34 @@
 }
 
 /* Полоса прогресса чтения под шапкой. */
+/*
+ * Прогресс чтения статьи.
+ *
+ * Волосяная линия в макете витрины показывает прокрутку документа целиком —
+ * вместе с подвалом и приглашением в конце. Читателю статьи нужно другое:
+ * сколько осталось от текста. Поэтому таймлайн объявлен на теле статьи,
+ * а диапазон `contain` — это ровно то время, пока текст накрывает экран.
+ *
+ * Полоса нарисована в нулевой ширине заранее: там, где scroll-driven не
+ * поддержан, она просто не появится, а не проедет один раз сама по себе.
+ */
+@utility fx-read-track {
+  @supports (animation-timeline: view()) {
+    view-timeline: --read block;
+  }
+}
+
+@utility fx-read {
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+
+  @supports (animation-timeline: view()) {
+    animation: fx-progress linear both;
+    animation-timeline: --read;
+    animation-range: contain;
+  }
+}
+
 @utility fx-progress {
   transform-origin: 0 50%;
 

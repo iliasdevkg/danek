@@ -68,6 +68,14 @@ export const en: Dictionary = {
     yes: "Yes",
     no: "No",
     ok: "Got it",
+    showMore: "Show all",
+  },
+
+  memory: {
+    welcomeBack: "Welcome back",
+    continueHint: "Last time you were reading \u201c{section}\u201d",
+    continueAction: "Continue",
+    dismiss: "Dismiss",
   },
 
   form: {

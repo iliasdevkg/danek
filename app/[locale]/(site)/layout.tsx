@@ -3,9 +3,11 @@ import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { SchoolJsonLd } from "@/components/site/json-ld";
+import { VisitMemory } from "@/components/site/visit-memory";
 import { getSiteContacts } from "@/lib/content/site-settings";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { routes, siteNavItems } from "@/lib/routes";
 
 /**
  * Витрина пересобирается раз в час.
@@ -52,6 +54,20 @@ export default async function SiteLayout({ children, params }: LayoutProps<"/[lo
       <SiteFooter locale={locale} t={t} contacts={contacts} />
 
       <SchoolJsonLd locale={locale} t={t} contacts={contacts} />
+
+      {/* Единственный клиентский кусочек витрины. Живёт в макете, а не на
+          главной: раздел нужно записать при переходе на любую страницу,
+          а поздороваться — только на главной. */}
+      <VisitMemory
+        items={siteNavItems(locale, t)}
+        homeHref={routes.home(locale)}
+        labels={{
+          welcomeBack: t.memory.welcomeBack,
+          continueHint: t.memory.continueHint,
+          continueAction: t.memory.continueAction,
+          dismiss: t.memory.dismiss,
+        }}
+      />
     </div>
   );
 }

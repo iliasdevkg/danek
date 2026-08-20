@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { UserRoundCheck, Users } from "lucide-react";
+import { UserRoundCheck } from "lucide-react";
 
 import { CtaBand } from "@/components/site/cta-band";
 import { PageHero } from "@/components/site/page-hero";
 import { Photo } from "@/components/site/photo";
 import { Kicker } from "@/components/site/section-header";
 import { TeacherCard } from "@/components/site/teacher-card";
+import { VaultMark } from "@/components/site/vault-mark";
 import { buttonVariants } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getSiteContacts } from "@/lib/content/site-settings";
@@ -107,13 +108,16 @@ export default async function TeachersPage({ params }: PageProps<"/[locale]/teac
         <h2 className="sr-only">{t.nav.teachers}</h2>
 
         {teachers.length > 0 ? (
-          <ul className="grid grid-cols-2 gap-x-5 gap-y-10 sm:gap-x-6 md:grid-cols-3 md:gap-x-8 md:gap-y-12 lg:grid-cols-4">
+          <ul className="teacher-grid grid grid-cols-2 gap-x-5 gap-y-10 sm:gap-x-6 md:grid-cols-3 md:gap-x-8 md:gap-y-12 lg:grid-cols-4">
             {teachers.map((teacher) => (
               <li key={teacher.id} className="fx-in">
                 <TeacherCard teacher={teacher} />
 
                 {teacher.yearsTeaching ? (
-                  <p className="text-caption text-ink-faint mt-2 text-center" data-numeric>
+                  <p
+                    className="text-caption text-ink-faint mt-2 pl-[1.875rem] sm:pl-11"
+                    data-numeric
+                  >
                     {experienceLabel(teacher.yearsTeaching)}
                   </p>
                 ) : null}
@@ -125,7 +129,7 @@ export default async function TeachersPage({ params }: PageProps<"/[locale]/teac
              экран всё равно ведёт дальше — родителю предлагают прийти и
              познакомиться лично, как и обещает текст. */
           <EmptyState
-            icon={<Users className="size-7" aria-hidden="true" />}
+            art={<VaultMark />}
             title={page.emptyTitle}
             description={page.empty}
             action={

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Images } from "lucide-react";
 
 import { CtaBand } from "@/components/site/cta-band";
 import { GalleryAlbums } from "@/components/site/gallery-albums";
 import { PageHero } from "@/components/site/page-hero";
+import { VaultMark } from "@/components/site/vault-mark";
 import { Photo } from "@/components/site/photo";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getGalleryAlbums } from "@/lib/content/gallery";
@@ -78,7 +78,7 @@ export default async function GalleryPage({ params }: PageProps<"/[locale]/galle
           />
         ) : (
           <EmptyState
-            icon={<Images className="size-7" aria-hidden="true" />}
+            art={<VaultMark />}
             title={t.common.empty}
             description={t.galleryPage.empty}
           />

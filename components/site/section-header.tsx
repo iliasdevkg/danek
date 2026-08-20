@@ -63,7 +63,7 @@ export function SectionHeader({
   return (
     <div
       className={cn(
-        "flex flex-col gap-5",
+        "flex flex-col gap-4 sm:gap-5",
         centered ? "items-center text-center" : "md:flex-row md:items-end md:justify-between",
         className,
       )}
@@ -71,14 +71,14 @@ export function SectionHeader({
       <div className={cn(centered ? "max-w-2xl" : "max-w-2xl")}>
         <Kicker tone={tone}>{kicker}</Kicker>
 
-        <h2 className={cn("text-h2 mt-4", tone === "inverse" ? "text-white" : "text-ink")}>
+        <h2 className={cn("text-h2 mt-3 sm:mt-4", tone === "inverse" ? "text-white" : "text-ink")}>
           {title}
         </h2>
 
         {lead ? (
           <p
             className={cn(
-              "text-lead mt-4",
+              "text-body sm:text-lead mt-3 sm:mt-4",
               centered && "mx-auto",
               tone === "inverse" ? "text-white/70" : "text-ink-muted",
             )}

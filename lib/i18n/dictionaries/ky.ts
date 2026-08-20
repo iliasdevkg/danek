@@ -77,6 +77,14 @@ export const ky: Dictionary = {
     yes: "Ооба",
     no: "Жок",
     ok: "Түшүнүктүү",
+    showMore: "Баарын көрсөтүү",
+  },
+
+  memory: {
+    welcomeBack: "Кайра кош келиңиз",
+    continueHint: "Өткөн жолу «{section}» бөлүмүн карагансыз",
+    continueAction: "Улантуу",
+    dismiss: "Эскертмени жашыруу",
   },
 
   form: {

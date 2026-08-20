@@ -29,11 +29,11 @@ export function SiteFooter({
   const hasContacts = Boolean(contacts.phonePrimary || contacts.email || address);
 
   return (
-    <footer className="surface-dark mt-24 text-white md:mt-32" data-surface="dark">
-      <div className="shell py-16 md:py-20">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+    <footer className="surface-dark mt-16 text-white sm:mt-24 md:mt-32" data-surface="dark">
+      <div className="shell py-12 sm:py-16 md:py-20">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-9 sm:gap-12 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
           {/* ------------------------------------------------------- О школе */}
-          <div className="flex flex-col gap-5 lg:col-span-4">
+          <div className="col-span-2 flex flex-col gap-5 md:col-span-1 lg:col-span-4">
             <Wordmark name={t.meta.siteName} city={t.meta.city} tone="inverse" className="w-fit" />
             <p className="text-small max-w-72 text-white/60">{t.footer.about}</p>
 
@@ -61,7 +61,7 @@ export function SiteFooter({
           </div>
 
           {/* ------------------------------------------------------- Разделы */}
-          <nav aria-label={t.footer.sections} className="lg:col-span-3">
+          <nav aria-label={t.footer.sections} className="col-span-2 md:col-span-1 lg:col-span-3">
             <h2 className="text-kicker text-white/45 uppercase">{t.footer.sections}</h2>
             <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2.5 lg:grid-cols-1">
               {items.map((item) => (
@@ -157,7 +157,7 @@ export function SiteFooter({
         </div>
 
         {/* --------------------------------------------------- Призыв внизу */}
-        <div className="mt-14 flex flex-col gap-5 rounded-2xl border border-white/12 bg-white/5 p-6 sm:flex-row sm:items-center sm:justify-between md:p-8">
+        <div className="mt-10 flex flex-col gap-5 rounded-2xl border border-white/12 bg-white/5 p-6 sm:mt-14 sm:flex-row sm:items-center sm:justify-between md:p-8">
           <div>
             <p className="font-display text-h3 text-white">{t.footer.ctaTitle}</p>
             <p className="text-small mt-1.5 text-white/60">{t.footer.ctaText}</p>
@@ -180,7 +180,7 @@ export function SiteFooter({
           </div>
         </div>
 
-        <div className="text-caption mt-10 flex flex-col gap-2 border-t border-white/10 pt-7 text-white/45 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-caption mt-8 flex flex-col gap-2 border-t border-white/10 pt-6 text-white/45 sm:mt-10 sm:flex-row sm:items-center sm:justify-between sm:pt-7">
           <p>
             © {new Date().getFullYear()} {t.meta.siteNameFull}. {t.footer.rights}.
           </p>

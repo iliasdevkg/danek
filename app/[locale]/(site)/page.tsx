@@ -23,6 +23,7 @@ import { HomeHero } from "@/components/site/home-hero";
 import { NewsCard } from "@/components/site/news-card";
 import { Photo } from "@/components/site/photo";
 import { ProgramCard } from "@/components/site/program-card";
+import { ShowMore } from "@/components/site/show-more";
 import { SchoolLife } from "@/components/site/school-life";
 import { Kicker, SectionHeader } from "@/components/site/section-header";
 import { TeacherCard } from "@/components/site/teacher-card";
@@ -137,7 +138,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
       {/* ------------------------------------------------------------ О школе */}
       <section className="shell section-t">
-        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-14">
+        <div className="grid items-center gap-8 sm:gap-12 lg:grid-cols-12 lg:gap-14">
           {/* Коллаж: крупный кадр и перекрывающий его угол квадратом. Тот же
               приём, что на обложке, — раздел читается как продолжение
               разговора, а не как новый разворот. */}
@@ -145,7 +146,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             {/* Кадр раскрывается снизу вверх, а его содержимое едет параллаксом:
                 внутренний слой намеренно больше рамки на 14% с каждой стороны,
                 иначе сдвиг обнажил бы край фотографии. */}
-            <figure className="fx-mask bg-paper-sunken relative aspect-4/5 w-full overflow-hidden rounded-xs">
+            <figure className="fx-mask bg-paper-sunken relative aspect-4/3 w-full overflow-hidden rounded-xs sm:aspect-4/5">
               <div className="fx-parallax absolute inset-[-14%]">
                 <Photo
                   src={STOCK_IMAGES.aboutMission}
@@ -168,10 +169,10 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             <Kicker>{home.manifesto.kicker}</Kicker>
             <h2 className="text-h2 text-ink mt-4">{home.manifesto.title}</h2>
 
-            <p className="text-lead text-ink mt-6">{home.manifesto.bodyFirst}</p>
+            <p className="text-lead text-ink mt-5 sm:mt-6">{home.manifesto.bodyFirst}</p>
             <p className="text-body text-ink-muted mt-4">{home.manifesto.bodySecond}</p>
 
-            <dl className="border-rule mt-9 grid grid-cols-3 gap-4 border-y py-6">
+            <dl className="border-rule mt-7 grid grid-cols-3 gap-4 border-y py-5 sm:mt-9 sm:py-6">
               {manifestoPoints.map((point) => (
                 <div key={point.label} className="flex flex-col gap-1">
                   <dt className="text-caption text-ink-muted order-2">{point.label}</dt>
@@ -185,7 +186,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
               ))}
             </dl>
 
-            <blockquote className="border-gold bg-gold-soft/60 mt-8 rounded-xl border-l-4 py-5 pr-5 pl-6">
+            <blockquote className="border-gold bg-gold-soft/60 mt-6 rounded-xl border-l-4 py-5 pr-5 pl-6 sm:mt-8">
               {/* Кавычки не вшиты в разметку: их рисует базовый стиль `q` по
                   языку страницы — «ёлочки» для ru/ky, “лапки” для en. */}
               <p className="font-display text-h3 text-ink">
@@ -232,7 +233,13 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
            * обычная сетка: три липких блока на коротком экране просто
            * перекрыли бы друг друга и спрятали содержимое.
            */}
-          <div className="mt-12 grid gap-6 md:grid-cols-3 lg:block lg:gap-0 lg:space-y-6">
+          <ShowMore
+            id="more-stages"
+            label={t.common.showMore}
+            visible={2}
+            className="mt-8 sm:mt-12"
+            itemsClassName="grid gap-6 md:grid-cols-3 lg:block lg:gap-0 lg:space-y-6"
+          >
             {stages.map((stage, index) => (
               <div
                 key={stage.title}
@@ -251,7 +258,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 />
               </div>
             ))}
-          </div>
+          </ShowMore>
         </div>
       </section>
 
@@ -282,7 +289,12 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             </div>
           </div>
 
-          <ol className="lg:col-span-7 lg:col-start-6">
+          <ShowMore
+            id="more-principles"
+            label={t.common.showMore}
+            className="lg:col-span-7 lg:col-start-6"
+            as="ol"
+          >
             {principles.map((item, index) => (
               <li
                 key={item.title}
@@ -304,7 +316,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 </div>
               </li>
             ))}
-          </ol>
+          </ShowMore>
         </div>
       </section>
 
@@ -345,7 +357,14 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 tone="inverse"
               />
 
-              <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <ShowMore
+                id="more-achievements"
+                label={t.common.showMore}
+                visible={2}
+                as="ul"
+                className="mt-8 sm:mt-12"
+                itemsClassName="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+              >
                 {achievements.map((item) => (
                   <li
                     key={item.title}
@@ -358,7 +377,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                     <p className="text-small mt-2.5 text-white/65">{item.text}</p>
                   </li>
                 ))}
-              </ul>
+              </ShowMore>
             </div>
           </div>
         </div>
@@ -381,13 +400,19 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             }
           />
 
-          <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
+          <ShowMore
+            id="more-teachers"
+            label={t.common.showMore}
+            visible={2}
+            className="mt-8 sm:mt-12"
+            itemsClassName="teacher-grid grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4"
+          >
             {teachers.map((teacher) => (
               <div key={teacher.id} className="fx-in">
                 <TeacherCard teacher={teacher} />
               </div>
             ))}
-          </div>
+          </ShowMore>
         </section>
       ) : null}
 
@@ -408,11 +433,11 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           lead={home.testimonials.lead}
         />
 
-        <div className="mt-12 grid items-start gap-6 lg:grid-cols-12">
+        <div className="mt-8 grid items-start gap-6 sm:mt-12 lg:grid-cols-12">
           {/* Крупная цитата стоит на золотой подложке: это единственное место
               на странице, где золото красит не действие, а слово родителя —
               и потому не спорит с кнопкой «Подать заявку». */}
-          <figure className="fx-in border-gold/25 bg-gold-soft/45 relative flex flex-col gap-8 rounded-2xl border p-8 lg:col-span-7 lg:p-12">
+          <figure className="fx-in border-gold/25 bg-gold-soft/45 relative flex flex-col gap-6 rounded-2xl border p-6 sm:gap-8 sm:p-8 lg:col-span-7 lg:p-12">
             <Quote
               aria-hidden="true"
               className="text-gold/25 absolute top-8 right-8 size-20 lg:size-28"
@@ -428,11 +453,17 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             </figcaption>
           </figure>
 
-          <div className="grid gap-6 lg:col-span-5">
+          <ShowMore
+            id="more-testimonials"
+            label={t.common.showMore}
+            visible={1}
+            className="lg:col-span-5"
+            itemsClassName="grid gap-6"
+          >
             {testimonials.slice(1).map((item) => (
               <TestimonialCard key={item.author} text={item.text} author={item.author} />
             ))}
-          </div>
+          </ShowMore>
         </div>
       </section>
 
@@ -449,20 +480,26 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             }
           />
 
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <ShowMore
+            id="more-news"
+            label={t.common.showMore}
+            visible={2}
+            className="mt-8 sm:mt-12"
+            itemsClassName="grid gap-6 md:grid-cols-3"
+          >
             {news.map((item) => (
               <NewsCard key={item.id} item={item} locale={locale} more={t.common.more} />
             ))}
-          </div>
+          </ShowMore>
         </section>
       ) : null}
 
       {/* ----------------------------------------------------------------- FAQ */}
       <section className="shell section-t">
-        <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+        <div className="grid gap-8 sm:gap-10 lg:grid-cols-12 lg:gap-14">
           <div className="lg:col-span-4">
             <Kicker>{home.faq.kicker}</Kicker>
-            <h2 className="text-h2 text-ink mt-4">{home.faq.title}</h2>
+            <h2 className="text-h2 text-ink mt-3 sm:mt-4">{home.faq.title}</h2>
 
             <div className="mt-8 hidden lg:block">
               <Link

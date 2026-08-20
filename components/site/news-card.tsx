@@ -1,75 +1,159 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { Photo } from "@/components/site/photo";
 import type { NewsCard as News } from "@/lib/content/news";
 import type { Locale } from "@/lib/i18n/config";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatDateParts } from "@/lib/format";
 import { routes } from "@/lib/routes";
+import { cn } from "@/lib/utils";
 
 /**
  * Карточка новости.
  *
  * Ссылкой служит вся карточка, а не заголовок: на телефоне это разница между
- * попаданием с первого раза и промахом мимо строки текста. Дата вынесена
- * на обложку — в сетке из трёх колонок так она не съедает высоту у заголовка.
+ * попаданием с первого раза и промахом мимо строки текста.
+ *
+ * Дата подана не пилюлей с календариком поверх снимка, а датой в левом поле:
+ * число крупным дисплейным начертанием, под ним месяц и год, справа
+ * вертикальная линейка. Так дату ставят в газете и в дневнике. У новости
+ * дата — половина смысла, а прежняя серая пилюля приравнивала её к декору;
+ * иконка календаря рядом со словом «июля» к тому же не сообщала ничего.
+ *
+ * Две раскладки. `default` — обычная колонка. `wide` занимает две колонки и
+ * разворачивается в разворот: снимок слева (или справа — сторона задаётся
+ * снаружи), текст крупнее. Размер карточки говорит о весе материала раньше,
+ * чем читатель дошёл до заголовка. Кадр в развороте тянется по высоте текста,
+ * поэтому широкая карточка встаёт вровень с обычной соседкой и ряд не рвётся.
  */
-export function NewsCard({ item, locale, more }: { item: News; locale: Locale; more: string }) {
+export function NewsCard({
+  item,
+  locale,
+  more,
+  variant = "default",
+  flip = false,
+}: {
+  item: News;
+  locale: Locale;
+  more: string;
+  variant?: "default" | "wide";
+  /** Разворот зеркалится: снимок уезжает вправо. Только для `wide`. */
+  flip?: boolean;
+}) {
+  const wide = variant === "wide";
+
   return (
-    <article className="fx-in h-full">
+    <article className={cn("fx-in h-full", wide && "lg:col-span-2")}>
       <Link
         href={routes.newsItem(locale, item.slug)}
-        className="card hover-lift group flex h-full flex-col overflow-hidden focus-visible:outline-offset-4"
+        className={cn(
+          "card hover-lift group h-full overflow-hidden focus-visible:outline-offset-4",
+          // Разворот без обложки разворачивать не во что: половина сетки
+          // осталась бы пустой прямоугольной дырой.
+          wide && item.coverUrl ? "grid lg:grid-cols-2" : "flex flex-col",
+        )}
       >
         {item.coverUrl ? (
-          <div className="bg-paper-sunken relative aspect-16/10 w-full overflow-hidden">
+          <div
+            className={cn(
+              "bg-paper-sunken relative w-full overflow-hidden",
+              wide
+                ? ["aspect-video lg:aspect-auto lg:min-h-72", flip && "lg:order-2"]
+                : "aspect-video sm:aspect-16/10",
+            )}
+          >
             <Photo
               src={item.coverUrl}
               alt=""
               zoom
-              sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
+              sizes={
+                wide
+                  ? "(min-width: 1024px) 40vw, 92vw"
+                  : "(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
+              }
             />
-
-            <time
-              dateTime={item.publishedAt}
-              className="bg-paper-raised/95 text-caption text-ink shadow-soft absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-semibold"
-              data-numeric
-            >
-              <CalendarDays className="text-highlight size-3.5" aria-hidden="true" />
-              {formatDate(item.publishedAt, locale)}
-            </time>
           </div>
         ) : null}
 
-        <div className="flex flex-1 flex-col p-6">
-          {/* Без обложки дата должна быть видна всё равно — иначе новость
-              выглядит как заметка без времени. */}
-          {item.coverUrl ? null : (
-            <time
-              dateTime={item.publishedAt}
-              className="text-caption text-ink-faint mb-3 inline-flex items-center gap-1.5"
-              data-numeric
-            >
-              <CalendarDays className="text-highlight size-3.5" aria-hidden="true" />
-              {formatDate(item.publishedAt, locale)}
-            </time>
+        <div
+          className={cn(
+            "grid flex-1 grid-cols-[auto_minmax(0,1fr)] gap-x-4 sm:gap-x-5",
+            wide ? "content-center p-6 md:p-9 lg:p-10" : "p-6",
           )}
+        >
+          <Dateline value={item.publishedAt} locale={locale} />
 
-          <h3 className="text-h3 text-ink">{item.title}</h3>
+          {/* Линейка отделяет дату от текста и тянется на всю высоту записи —
+              именно она превращает две колонки в дневниковую строку, а не
+              в подпись, случайно оказавшуюся слева. */}
+          <div className="border-rule flex min-w-0 flex-col border-l pl-4 sm:pl-5">
+            <h3
+              className={cn(
+                "text-ink",
+                wide ? "text-h3 lg:text-[1.75rem] lg:leading-[1.15] xl:text-[2rem]" : "text-h3",
+              )}
+            >
+              {item.title}
+            </h3>
 
-          {item.excerpt ? (
-            <p className="text-small text-ink-muted mt-3 line-clamp-3 flex-1">{item.excerpt}</p>
-          ) : null}
+            {item.excerpt ? (
+              <p
+                className={cn(
+                  "text-ink-muted mt-3 flex-1",
+                  wide ? "text-small lg:text-lead lg:line-clamp-none" : "text-small line-clamp-3",
+                )}
+              >
+                {item.excerpt}
+              </p>
+            ) : null}
 
-          <span className="text-small text-accent mt-5 inline-flex items-center gap-1.5 font-semibold">
-            {more}
-            <ArrowRight
-              className="size-4 transition-transform duration-[240ms] ease-(--ease-entrance) group-hover:translate-x-1"
-              aria-hidden="true"
-            />
-          </span>
+            <span
+              className={cn(
+                "text-small text-accent inline-flex items-center gap-1.5 font-semibold",
+                wide ? "mt-6" : "mt-5",
+              )}
+            >
+              {more}
+              <ArrowRight
+                className="size-4 transition-transform duration-[240ms] ease-(--ease-entrance) group-hover:translate-x-1"
+                aria-hidden="true"
+              />
+            </span>
+          </div>
         </div>
       </Link>
     </article>
+  );
+}
+
+/**
+ * Дата в левом поле: крупное число, под ним месяц и год.
+ *
+ * Год стоит отдельной строкой и намеренно бледнее месяца. Архив новостей
+ * школы живёт годами, и «29 июля» без года в нём — дата, которая врёт;
+ * но в свежей ленте год не должен спорить с числом за внимание.
+ *
+ * Машинная дата остаётся в `datetime`, поэтому разбор на части — чисто
+ * визуальный приём: ни поиск, ни скринридер от него ничего не теряют.
+ */
+function Dateline({ value, locale }: { value: string; locale: Locale }) {
+  const parts = formatDateParts(value, locale);
+
+  if (!parts) {
+    return (
+      <time dateTime={value} className="text-caption text-ink-faint" data-numeric>
+        {formatDate(value, locale)}
+      </time>
+    );
+  }
+
+  return (
+    <time dateTime={value} className="shrink-0 text-left" data-numeric>
+      <span className="font-display text-ink block text-[1.75rem] leading-[0.9] font-extrabold tracking-[-0.03em] sm:text-[2rem]">
+        {parts.day}
+      </span>
+      <span className="text-caption text-ink-muted mt-1.5 block leading-tight">{parts.month}</span>
+      <span className="text-caption text-ink-faint block leading-tight">{parts.year}</span>
+    </time>
   );
 }

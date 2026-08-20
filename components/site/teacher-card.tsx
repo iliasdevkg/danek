@@ -5,38 +5,71 @@ import type { TeacherCard as Teacher } from "@/lib/content/teachers";
 /**
  * Карточка педагога.
  *
- * Портрет строго вертикальный — так лица выстраиваются в ровный ряд, даже
- * когда школа загрузила снимки разного размера, а сетка педагогов читается
- * как один блок, а не набор отдельных прямоугольников.
- * Нет фото — стоят инициалы на фирменном фоне, а не пустое место.
+ * Портрет стоит в арке — форме с эмблемы школы, где росток заключён в круг.
+ * Арки соседних карточек чуть разной высоты и упираются в одну землю: ряд
+ * получает силуэт, а подписи всё равно остаются на одной линии. Механика
+ * (слот фиксированной пропорции и доли высоты внутри него) расписана
+ * в `.teacher-slot`, globals.css.
+ *
+ * Нет фото — стоят инициалы на фирменном фоне, а не пустое место. Арка
+ * при этом остаётся: колоннада не должна разваливаться из-за того, что
+ * у одного человека снимок ещё не загружен.
+ *
+ * Подпись выровнена по левому краю, а не по центру, и отчёркнута короткой
+ * чертой. Центрированная подпись под фотографией — подпись из шаблона;
+ * левый край и черта превращают её в титр.
+ *
+ * Всё, что известно о человеке, видно сразу: имя, должность, предметы.
+ * Наведение только усиливает — наезжает кадр и вырастает черта. Прятать
+ * что-либо под курсор здесь нельзя: на телефоне курсора нет, а карточка
+ * не ссылка, и раскрыть её нажатием тоже нельзя.
  */
 export function TeacherCard({ teacher }: { teacher: Teacher }) {
   return (
-    <article className="group text-center">
-      <div className="bg-accent-soft shadow-card group-hover:shadow-raised relative mx-auto aspect-3/4 w-full overflow-hidden rounded-xs transition-shadow duration-[320ms]">
-        {teacher.photoUrl ? (
-          <Photo
-            src={teacher.photoUrl}
-            alt={teacher.fullName}
-            zoom
-            sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 70vw"
-          />
-        ) : (
-          <span
-            aria-hidden="true"
-            className="font-display text-accent/35 grid size-full place-items-center text-5xl font-extrabold"
-          >
-            {initialsOf(teacher.fullName)}
-          </span>
-        )}
+    <article className="group">
+      <div className="teacher-slot w-full">
+        <div className="arch bg-accent-soft shadow-card group-hover:shadow-raised relative w-full transition-shadow duration-[320ms]">
+          {teacher.photoUrl ? (
+            <Photo
+              src={teacher.photoUrl}
+              alt={teacher.fullName}
+              zoom
+              className="portrait-reveal"
+              sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 70vw"
+            />
+          ) : (
+            <span
+              aria-hidden="true"
+              className="font-display text-accent/35 grid size-full place-items-center text-5xl font-extrabold"
+            >
+              {initialsOf(teacher.fullName)}
+            </span>
+          )}
+        </div>
       </div>
 
-      <h3 className="text-h3 text-ink mt-5">{teacher.fullName}</h3>
-      <p className="text-small text-accent mt-1.5">{teacher.position}</p>
+      <div className="mt-4 flex items-start gap-2.5 sm:gap-3">
+        {/* Черта растёт масштабом, а не шириной: ширина — это раскладка,
+            и её пересчёт на восьми карточках сразу заметен на недорогом
+            телефоне. Масштаб живёт в композиторе и не стоит ничего. */}
+        <span
+          aria-hidden="true"
+          className="bg-accent mt-2.5 h-px w-5 shrink-0 origin-left scale-x-50 transition-transform duration-[380ms] ease-(--ease-entrance) group-hover:scale-x-100 sm:w-8"
+        />
 
-      {teacher.subjects.length > 0 ? (
-        <p className="text-caption text-ink-faint mt-2">{teacher.subjects.join(" · ")}</p>
-      ) : null}
+        <div className="min-w-0">
+          <h3 className="text-h3 text-ink">{teacher.fullName}</h3>
+
+          {/* Должность не капслоком: «руководитель направления „английский
+              язык“» набирается тремя строками прописных и превращается
+              в крик. Титр здесь держит черта слева, а не регистр. */}
+          <p className="text-small text-ink-muted mt-1.5">{teacher.position}</p>
+
+          {teacher.subjects.length > 0 ? (
+            <p className="text-caption text-ink-faint mt-2">{teacher.subjects.join(" · ")}</p>
+          ) : null}
+        </div>
+      </div>
     </article>
   );
 }

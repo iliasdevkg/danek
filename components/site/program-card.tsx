@@ -50,7 +50,9 @@ export function ProgramCard({
         <div
           className={cn(
             "bg-paper-sunken relative w-full overflow-hidden",
-            wide ? "aspect-video lg:aspect-auto lg:min-h-[26rem]" : "aspect-4/3",
+            wide
+              ? "aspect-2/1 sm:aspect-video lg:aspect-auto lg:min-h-[26rem]"
+              : "aspect-video sm:aspect-4/3",
           )}
         >
           <Photo
@@ -70,16 +72,22 @@ export function ProgramCard({
         </div>
 
         <div
-          className={cn("flex flex-1 flex-col", wide ? "justify-center p-8 lg:p-12" : "p-6 md:p-7")}
+          className={cn(
+            "flex flex-1 flex-col",
+            wide ? "justify-center p-6 sm:p-8 lg:p-12" : "p-6 md:p-7",
+          )}
         >
-          <h3 className={cn("text-ink", wide ? "text-h2" : "text-h3")}>{title}</h3>
+          <h3 className={cn("text-ink", wide ? "text-h3 sm:text-h2" : "text-h3")}>{title}</h3>
           <p
-            className={cn("text-ink-muted mt-3 flex-1", wide ? "text-lead max-w-md" : "text-small")}
+            className={cn(
+              "text-ink-muted mt-3 flex-1",
+              wide ? "text-small sm:text-lead max-w-md" : "text-small",
+            )}
           >
             {text}
           </p>
 
-          <span className="text-small text-accent mt-6 inline-flex items-center gap-1.5 font-semibold">
+          <span className="text-small text-accent mt-4 inline-flex items-center gap-1.5 font-semibold sm:mt-6">
             {more}
             <ArrowRight
               className="size-4 transition-transform duration-[240ms] ease-(--ease-entrance) group-hover:translate-x-1"

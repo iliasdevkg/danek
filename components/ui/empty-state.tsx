@@ -10,15 +10,25 @@ import { cn } from "@/lib/utils";
  * пока нет» — в отличие от сплошной рамки, которую глаз принимает за карточку
  * с настоящими данными. Один рецепт работает и на витрине, и в плотных
  * таблицах CRM, поэтому отдельного «пустого состояния для админки» нет.
+ *
+ * Значок и иллюстрация — разные пропсы, а не один с двумя размерами.
+ * `icon` садится в плитку 40×40 и годится всюду, включая таблицы CRM, где
+ * пустых состояний много и каждое должно быть коротким. `art` — крупный
+ * рисунок во всю ширину блока: он уместен там, где пусто целиком, то есть
+ * на витрине, и неуместен в плотной админке. Передавать оба сразу незачем,
+ * и разметка это проговаривает: рисунок вытесняет значок.
  */
 export function EmptyState({
   icon,
+  art,
   title,
   description,
   action,
   className,
 }: {
   icon?: ReactNode;
+  /** Крупная иллюстрация вместо значка. Только для витрины. */
+  art?: ReactNode;
   title: string;
   description?: string;
   action?: ReactNode;
@@ -32,11 +42,12 @@ export function EmptyState({
         className,
       )}
     >
-      {icon ? (
-        <span aria-hidden="true" className="icon-tile">
-          {icon}
-        </span>
-      ) : null}
+      {art ??
+        (icon ? (
+          <span aria-hidden="true" className="icon-tile">
+            {icon}
+          </span>
+        ) : null)}
 
       <div className="flex flex-col gap-2">
         <p className="text-h3 text-ink">{title}</p>

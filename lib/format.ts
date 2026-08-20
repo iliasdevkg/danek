@@ -25,6 +25,37 @@ export function formatDate(value: string | Date, locale: Locale): string {
   }).format(date);
 }
 
+/**
+ * Дата, разобранная на части, — для типографической подачи.
+ *
+ * Число и месяц приходят отдельными строками, потому что в вёрстке они живут
+ * порознь: крупное число и мелкое название под ним. Месяц запрашивается сам
+ * по себе намеренно — в паре с числом русский Intl отдаёт родительный падеж
+ * («июля»), а отдельно стоящему слову нужен именительный («июль»).
+ *
+ * Порядок частей в разных языках разный (по-кыргызски год идёт первым), но
+ * здесь это не имеет значения: порядок задаёт вёрстка, а не локаль.
+ */
+export function formatDateParts(
+  value: string | Date,
+  locale: Locale,
+): { day: string; month: string; year: string } | null {
+  const date = typeof value === "string" ? new Date(value) : value;
+  if (Number.isNaN(date.getTime())) return null;
+
+  const part = (options: Intl.DateTimeFormatOptions) =>
+    new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+      ...options,
+      timeZone: SCHOOL.timeZone,
+    }).format(date);
+
+  return {
+    day: part({ day: "numeric" }),
+    month: part({ month: "long" }),
+    year: part({ year: "numeric" }),
+  };
+}
+
 export function formatDateTime(value: string | Date, locale: Locale): string {
   const date = typeof value === "string" ? new Date(value) : value;
   if (Number.isNaN(date.getTime())) return "";

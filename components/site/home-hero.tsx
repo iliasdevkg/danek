@@ -54,7 +54,7 @@ export function HomeHero({
   return (
     <section className="relative isolate">
       {/* ---------------------------------------------------------- Кадр */}
-      <div className="relative flex min-h-[92svh] flex-col justify-end overflow-hidden">
+      <div className="relative flex min-h-[78svh] flex-col justify-end overflow-hidden sm:min-h-[92svh]">
         <div aria-hidden="true" className="fx-hero absolute inset-0 -z-20">
           <Photo src={heroImage} alt="" priority className="object-cover" sizes="100vw" />
         </div>
