@@ -87,6 +87,22 @@
    * карточка не отрывается от подложки и весь экран читается как одно
    * серое поле. Здесь тень заметно шире и мягче по краю.
    */
+  /*
+   * Скругления заведены переменными, а не числами прямо в @theme.
+   *
+   * `@theme inline` подставляет значение в утилиту как есть: `rounded-lg`
+   * скомпилировалось бы в `border-radius: 20px`, и переопределить его под
+   * витриной было бы уже нечем. Ссылка на переменную сохраняет возможность
+   * менять форму на лету — тёмной витрине нужны почти прямые углы,
+   * админке остаются мягкие.
+   */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-2xl: 36px;
+
   --shadow-app: 0 1px 2px rgb(14 27 52 / 0.04), 0 6px 16px -8px rgb(14 27 52 / 0.1);
   --shadow-app-pop: 0 10px 30px -12px rgb(14 27 52 / 0.22), 0 2px 8px -4px rgb(14 27 52 / 0.1);
 }
@@ -148,6 +164,109 @@
 
   --shadow-app: 0 1px 2px rgb(0 0 0 / 0.5), 0 6px 16px -8px rgb(0 0 0 / 0.6);
   --shadow-app-pop: 0 10px 30px -12px rgb(0 0 0 / 0.7), 0 2px 8px -4px rgb(0 0 0 / 0.5);
+}
+
+/* ---------------------------------------------------------------------------
+   Витрина: кинематографическая тёмная тема.
+
+   Сайт школы намеренно существует только в тёмном варианте, и это не лень,
+   а следствие выбранной подачи. Кинематографический разворот держится на том,
+   что фотография светится на почти чёрном, а текста мало и он белый. Светлая
+   копия такой страницы — это уже другая страница: те же блоки на белом читаются
+   как обычный корпоративный сайт, ради которого весь приём и затевался.
+
+   Переключатель темы остаётся в админке. Там он уместен: инструмент, в который
+   смотрят весь рабочий день, подстраивают под себя. Витрина — оформленная
+   вещь, а не рабочее место, и у неё один задуманный вид.
+
+   Переменные переопределяются под атрибутом, а не глобально: за пределами
+   витрины — в CRM и кабинетах — продолжает действовать светлый набор.
+   --------------------------------------------------------------------------- */
+
+[data-surface="cinema"] {
+  color-scheme: dark;
+
+  /* Не чистый чёрный: у него нет глубины, и фотография на нём выглядит
+     наклеенной. Синеватый подмес даёт воздух и родство с фирменным синим. */
+  --paper: #07090e;
+  --paper-raised: #0e121a;
+  --paper-sunken: #04060a;
+  --paper-tint: #0b0f16;
+  --paper-inverse: #f4f6fa;
+  --band: #04060a;
+
+  --ink: #f4f6fa;
+  --ink-muted: #98a1b2;
+  --ink-faint: #626b7d;
+  --ink-inverse: #07090e;
+
+  /* Линейки прозрачные, а не сплошные: они обязаны одинаково лежать и на фоне,
+     и поверх фотографии. Сплошной цвет на снимке выглядит грязной полосой. */
+  --rule: rgb(255 255 255 / 0.09);
+  --rule-strong: rgb(255 255 255 / 0.2);
+
+  /*
+   * Один яркий цвет на весь сайт — зелёный с эмблемы школы.
+   *
+   * На почти чёрном он светится и работает как единственный смысловой
+   * акцент: рубрики, подчёркивания, наведение. Второго яркого цвета нет
+   * намеренно — именно россыпь цветных плиток делала прежнюю версию детской.
+   */
+  --accent: #35e08a;
+  --accent-hover: #5beba3;
+  --accent-soft: rgb(53 224 138 / 0.12);
+  --accent-fg: #04120a;
+
+  --brand: #35e08a;
+  --brand-bright: #5beba3;
+  --brand-hover: #5beba3;
+  --brand-soft: rgb(53 224 138 / 0.1);
+  --brand-fg: #04120a;
+
+  /*
+   * Золота на витрине больше нет. Целевое действие красится белым: белая
+   * кнопка на почти чёрном — самый сильный контраст, который вообще бывает
+   * на экране, и ей не нужен цвет, чтобы её заметили.
+   *
+   * Имена сохранены: `gold` и `highlight` встречаются в разметке, и молчаливо
+   * оставить их указывающими на жёлтый — значит получить жёлтое пятно там,
+   * где его никто не ждёт.
+   */
+  --gold: #f4f6fa;
+  --gold-ink: #f4f6fa;
+  --gold-soft: rgb(255 255 255 / 0.08);
+  --gold-fg: #07090e;
+
+  --highlight: #35e08a;
+  --highlight-soft: rgb(53 224 138 / 0.12);
+
+  --success: #35e08a;
+  --success-soft: rgb(53 224 138 / 0.12);
+  --warning: #e8c468;
+  --warning-soft: rgb(232 196 104 / 0.14);
+  --danger: #ff6b5e;
+  --danger-soft: rgb(255 107 94 / 0.14);
+
+  --overlay: rgb(2 4 8 / 0.82);
+
+  /*
+   * Тени на тёмном почти не читаются — глубину здесь создаёт не тень,
+   * а разница светлот и свет по краю. Оставляем лёгкие, чтобы всплывающие
+   * панели всё же отрывались от фона.
+   */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.6);
+  --shadow-md: 0 8px 24px -12px rgb(0 0 0 / 0.8);
+  --shadow-lg: 0 24px 60px -24px rgb(0 0 0 / 0.9);
+  --shadow-xl: 0 40px 100px -40px rgb(0 0 0 / 0.95);
+  --shadow-overlay: var(--shadow-xl);
+
+  /* Скругления почти исчезают: мягкий угол — главная примета «детского». */
+  --r-xs: 2px;
+  --r-sm: 3px;
+  --r-md: 4px;
+  --r-lg: 6px;
+  --r-xl: 8px;
+  --r-2xl: 10px;
 }
 
 /* ---------------------------------------------------------------------------
@@ -222,16 +341,16 @@
   /* Шрифты приходят переменными из next/font — самохост, ноль запросов наружу.
      Manrope набирает заголовки: геометричный, но с мягкими окончаниями —
      строгий для школы и не сухой. Inter несёт весь текст и интерфейс. */
-  --font-display: var(--font-manrope), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-display: var(--font-display-face), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
 
-  /* Скругления крупные: карточка должна читаться как предмет, а не как рамка. */
-  --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
-  --radius-2xl: 36px;
+  /* Скругления приходят переменными — см. комментарий к --r-* выше. */
+  --radius-xs: var(--r-xs);
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+  --radius-2xl: var(--r-2xl);
   --radius-full: 9999px;
 
   --shadow-soft: var(--shadow-sm);
@@ -955,6 +1074,239 @@
   background-image:
     radial-gradient(60rem 32rem at 12% -10%, rgb(23 168 98 / 0.22), transparent 70%),
     radial-gradient(48rem 28rem at 95% 8%, rgb(240 168 40 / 0.16), transparent 68%);
+}
+
+/*
+ * Карточка на тёмной витрине.
+ *
+ * Тень на почти чёрном не работает: её попросту не видно, и карточка
+ * сливается с фоном. Глубину здесь создаёт разница светлот — подложка чуть
+ * светлее фона плюс волосяная граница. Наведение усиливает границу, а не
+ * поднимает карточку: подъём на тёмном читается как дрожь, а не как отклик.
+ */
+[data-surface="cinema"] .card {
+  background-color: var(--paper-raised);
+  border-color: var(--rule);
+  box-shadow: none;
+}
+
+@media (hover: hover) {
+  [data-surface="cinema"] .hover-lift:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--rule-strong);
+    background-color: color-mix(in oklab, var(--paper-raised) 88%, white);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Кинематографические эффекты прокрутки
+
+   Всё здесь построено на scroll-driven анимациях: прогресс задаёт сама
+   прокрутка, а не обработчик в JS. Разница не стилистическая. Обработчик
+   `scroll` будит главный поток на каждый кадр и на недорогом телефоне
+   превращает красивую страницу в дёргающуюся; эти же анимации живут в
+   композиторе и не занимают главный поток вообще.
+
+   Где scroll-driven ещё не поддержан (Safari) — блок просто виден сразу,
+   в своём конечном состоянии. Ни пустых экранов, ни прыжков: эффект
+   отсутствует, страница работает.
+   --------------------------------------------------------------------------- */
+
+@keyframes fx-parallax-out {
+  to {
+    transform: translate3d(0, 12%, 0) scale(1.12);
+    opacity: 0.35;
+  }
+}
+
+@keyframes fx-parallax-in {
+  from {
+    transform: translate3d(0, 14%, 0);
+  }
+  to {
+    transform: translate3d(0, -14%, 0);
+  }
+}
+
+@keyframes fx-line-up {
+  from {
+    transform: translate3d(0, 115%, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes fx-mask {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes fx-wipe-x {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes fx-rise-fade {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 2.5rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fx-track-x {
+  to {
+    transform: translate3d(calc(-100% + 100vw), 0, 0);
+  }
+}
+
+@keyframes fx-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/*
+ * Обложка уезжает вглубь.
+ *
+ * Пока читатель листает первый экран, снимок медленно наезжает и гаснет —
+ * страница «уходит под» следующий раздел. Таймлайн привязан к прокрутке
+ * документа, а не к появлению блока: эффект должен начаться в первом же
+ * пикселе движения.
+ */
+@utility fx-hero {
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: fx-parallax-out linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+      will-change: transform, opacity;
+    }
+  }
+}
+
+/* Параллакс фотографии внутри своей рамки: кадр живёт, пока проходит мимо. */
+@utility fx-parallax {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: fx-parallax-in linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+      will-change: transform;
+    }
+  }
+}
+
+/*
+ * Строка заголовка выезжает снизу.
+ *
+ * Родителю нужен `overflow: hidden` — строка обязана появляться из-под
+ * невидимого края, а не всплывать в воздухе. Задержку между строками
+ * задаёт сама вёрстка через `animation-range`, поэтому JS не нужен даже
+ * для каскада.
+ */
+@utility fx-line {
+  display: block;
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: fx-line-up linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 32%;
+    }
+  }
+}
+
+/* Раскрытие снизу вверх — для фотографий и крупных плашек. */
+@utility fx-mask {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: fx-mask linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+  }
+}
+
+/* Раскрытие слева направо — для линеек и подчёркиваний. */
+@utility fx-wipe {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: fx-wipe-x linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 25%;
+    }
+  }
+}
+
+/* Спокойное появление для рядовых блоков — чтобы эффектов не было слишком много. */
+@utility fx-in {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: fx-rise-fade linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
+}
+
+/*
+ * Горизонтальная лента, которую двигает вертикальная прокрутка.
+ *
+ * Родитель задаёт высоту в несколько экранов и держит внутри `sticky`-кадр;
+ * дорожка внутри едет влево ровно на свою длину минус ширину окна. Приём
+ * узнаваемый и почти всегда делается на JS с обработчиком скролла — здесь
+ * это три строки CSS и ноль килобайт.
+ */
+@utility fx-track {
+  display: flex;
+  width: max-content;
+
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: fx-track-x linear both;
+      animation-timeline: scroll(nearest);
+      will-change: transform;
+    }
+  }
+}
+
+/* Полоса прогресса чтения под шапкой. */
+@utility fx-progress {
+  transform-origin: 0 50%;
+
+  @supports (animation-timeline: scroll()) {
+    animation: fx-progress linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+/*
+ * Карточки, которые собираются стопкой при прокрутке.
+ *
+ * Чистый `position: sticky` без единой анимации: каждая следующая карточка
+ * останавливается чуть ниже предыдущей и накрывает её. Смещение задаёт
+ * переменная `--i`, проставленная в разметке.
+ */
+@utility fx-stack {
+  position: sticky;
+  top: calc(6rem + var(--i, 0) * 1.5rem);
 }
 
 /* ---------------------------------------------------------------------------

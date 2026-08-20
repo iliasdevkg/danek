@@ -204,7 +204,7 @@ export default async function TuitionPage({ params }: PageProps<"/[locale]/tuiti
             {plans.map((plan) => (
               <li
                 key={plan.id}
-                className="reveal-sm flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8 md:px-8"
+                className="fx-in flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8 md:px-8"
               >
                 {/* min-w-0: название тарифа приходит из CRM, и длинное имя
                     рядом с несжимаемой суммой обязано переноситься, а не
@@ -242,7 +242,7 @@ export default async function TuitionPage({ params }: PageProps<"/[locale]/tuiti
         <div className="mt-12 grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
           <div className="relative lg:col-span-5">
             {/*
-             * Зелёное свечение за аркой — глубина без второй фотографии.
+             * Зелёное свечение за кадром — глубина без второй фотографии.
              *
              * Вылет привязан к отступу `shell`: на телефоне он 20px, поэтому
              * -inset-6 (24px) вытолкнул бы свечение за правый край экрана и
@@ -254,7 +254,7 @@ export default async function TuitionPage({ params }: PageProps<"/[locale]/tuiti
               className="deco-glow absolute -inset-4 -z-10 opacity-40 md:-inset-6"
             />
 
-            <figure className="arch reveal-zoom bg-paper-sunken shadow-raised relative aspect-4/5 w-full">
+            <figure className="fx-mask bg-paper-sunken shadow-raised relative aspect-4/5 w-full overflow-hidden rounded-xs">
               <Photo
                 src={STOCK_IMAGES.lifeClassroom}
                 alt={page.includedImageAlt}
@@ -265,7 +265,7 @@ export default async function TuitionPage({ params }: PageProps<"/[locale]/tuiti
 
           <ul className="grid gap-6 sm:grid-cols-2 lg:col-span-7">
             {included.map((item) => (
-              <li key={item.title} className="card reveal p-6">
+              <li key={item.title} className="card fx-in p-6">
                 <span className="icon-tile">
                   <item.icon className="size-5" aria-hidden="true" />
                 </span>
@@ -283,7 +283,7 @@ export default async function TuitionPage({ params }: PageProps<"/[locale]/tuiti
 
         <ul className="mt-12 grid gap-6 md:grid-cols-2">
           {discounts.map((item) => (
-            <li key={item.title} className="card reveal flex items-start gap-4 p-6 sm:gap-5 sm:p-7">
+            <li key={item.title} className="card fx-in flex items-start gap-4 p-6 sm:gap-5 sm:p-7">
               <span className="icon-tile">
                 <item.icon className="size-5" aria-hidden="true" />
               </span>
@@ -312,7 +312,7 @@ export default async function TuitionPage({ params }: PageProps<"/[locale]/tuiti
 
           <ul className="grid gap-3 lg:col-span-7 lg:col-start-6">
             {payment.map((item) => (
-              <li key={item.text} className="card reveal-sm flex items-center gap-4 p-4 md:p-5">
+              <li key={item.text} className="card fx-in flex items-center gap-4 p-4 md:p-5">
                 <span className="bg-accent-soft text-accent grid size-10 shrink-0 place-items-center rounded-full">
                   <item.icon className="size-5" aria-hidden="true" />
                 </span>

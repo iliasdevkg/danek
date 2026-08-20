@@ -99,7 +99,7 @@ export default async function TeachersPage({ params }: PageProps<"/[locale]/teac
         {teachers.length > 0 ? (
           <ul className="grid grid-cols-2 gap-x-5 gap-y-10 sm:gap-x-6 md:grid-cols-3 md:gap-x-8 md:gap-y-12 lg:grid-cols-4">
             {teachers.map((teacher) => (
-              <li key={teacher.id} className="reveal">
+              <li key={teacher.id} className="fx-in">
                 <TeacherCard teacher={teacher} />
 
                 {teacher.yearsTeaching ? (
@@ -132,8 +132,8 @@ export default async function TeachersPage({ params }: PageProps<"/[locale]/teac
 
       {/* -------------------------------------------------------- Как выбираем */}
       <section className="shell section-t">
-        <div className="card reveal relative flex flex-col gap-6 overflow-hidden p-7 md:flex-row md:items-start md:gap-10 md:p-12">
-          {/* Зелёное свечение из угла — тот же приём, что за аркой на главной:
+        <div className="card fx-in relative flex flex-col gap-6 overflow-hidden p-7 md:flex-row md:items-start md:gap-10 md:p-12">
+          {/* Зелёное свечение из угла — тот же приём, что на обложке:
               глубина без второй фотографии и без единого лишнего запроса. */}
           <div
             aria-hidden="true"

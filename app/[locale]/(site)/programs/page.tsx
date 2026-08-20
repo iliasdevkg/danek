@@ -86,22 +86,18 @@ export default async function ProgramsPage({ params }: PageProps<"/[locale]/prog
       ...p.primary,
       detail: page.primaryDetail,
       image: STOCK_IMAGES.programsPrimary,
-      // Арка — знак школы; на странице она одна и открывает разворот.
-      arch: true,
     },
     {
       id: "stage-middle",
       ...p.middle,
       detail: page.middleDetail,
       image: STOCK_IMAGES.programsMiddle,
-      arch: false,
     },
     {
       id: "stage-senior",
       ...p.senior,
       detail: page.seniorDetail,
       image: STOCK_IMAGES.programsPrep,
-      arch: false,
     },
   ];
 
@@ -157,42 +153,27 @@ export default async function ProgramsPage({ params }: PageProps<"/[locale]/prog
               <article
                 key={stage.id}
                 id={stage.id}
-                className="reveal grid items-center gap-8 md:gap-12 lg:grid-cols-2 lg:gap-16"
+                className="fx-in grid items-center gap-8 md:gap-12 lg:grid-cols-2 lg:gap-16"
               >
-                <figure className={cn(flipped && "lg:order-2")}>
-                  {stage.arch ? (
-                    <div className="relative mx-auto max-w-md">
-                      {/* Свечение живёт в одной коробке с фотографией, а не в
-                          колонке: иначе на широком экране пятно уезжает в поля
-                          и перестаёт читаться как ореол вокруг арки.
-
-                          На узком экране вылет уменьшен: у `shell` поля 20px,
-                          а -inset-6 — это 24px, то есть свечение вылезало за
-                          правый край окна и включало горизонтальную прокрутку
-                          на 320px. Начиная с sm фотография уже центрируется
-                          внутри max-w-md, и полный ореол помещается. */}
-                      <div
-                        aria-hidden="true"
-                        className="deco-glow absolute -inset-4 -z-10 opacity-40 sm:-inset-6"
-                      />
-
-                      <div className="arch reveal-zoom bg-paper-sunken shadow-raised relative aspect-4/5 w-full">
-                        <Photo
-                          src={stage.image}
-                          alt={stage.imageAlt}
-                          sizes="(min-width: 1024px) 28rem, (min-width: 640px) 60vw, 90vw"
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="bg-paper-sunken shadow-raised relative aspect-4/3 w-full overflow-hidden rounded-2xl">
+                {/*
+                 * Все кадры ступеней теперь одинаково прямоугольные.
+                 * Купол читался как украшение и был главной приметой мягкой,
+                 * «детской» подачи; в кинематографическом развороте работает
+                 * сам снимок, а не форма его рамки.
+                 *
+                 * Внутренний слой едет параллаксом, пока строка проходит мимо, —
+                 * считает это прокрутка, а не обработчик в JS.
+                 */}
+                <figure className={cn("fx-mask", flipped && "lg:order-2")}>
+                  <div className="bg-paper-sunken relative aspect-4/3 w-full overflow-hidden rounded-xs">
+                    <div className="fx-parallax absolute inset-[-14%]">
                       <Photo
                         src={stage.image}
                         alt={stage.imageAlt}
                         sizes="(min-width: 1024px) 46vw, 90vw"
                       />
                     </div>
-                  )}
+                  </div>
                 </figure>
 
                 <div className={cn(flipped && "lg:order-1")}>
@@ -222,7 +203,7 @@ export default async function ProgramsPage({ params }: PageProps<"/[locale]/prog
         />
 
         {subjects.length > 0 ? (
-          <ul className="reveal-sm mt-10 flex flex-wrap gap-2.5">
+          <ul className="fx-in mt-10 flex flex-wrap gap-2.5">
             {subjects.map((subject) => (
               <li key={subject.id} className="chip border" style={subjectChipStyle(subject.color)}>
                 <span

@@ -63,7 +63,7 @@ export function SchoolLife({ t }: { t: Dictionary }) {
         <article
           key={tile.title}
           className={cn(
-            "reveal group bg-paper-sunken shadow-card relative overflow-hidden rounded-2xl",
+            "fx-in group bg-paper-sunken shadow-card relative overflow-hidden rounded-2xl",
             /*
              * `w-full` здесь обязателен, а не для красоты.
              *

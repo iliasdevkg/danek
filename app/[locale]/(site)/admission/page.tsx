@@ -113,7 +113,7 @@ export default async function AdmissionPage({ params }: PageProps<"/[locale]/adm
             const isLast = index === steps.length - 1;
 
             return (
-              <li key={step.title} className="reveal relative">
+              <li key={step.title} className="fx-in relative">
                 {/*
                  * Линия между шагами: маршрут читается как один путь, а не как
                  * четыре независимые карточки. Ширина считается от колонки, а
@@ -158,7 +158,7 @@ export default async function AdmissionPage({ params }: PageProps<"/[locale]/adm
 
           <ul className="grid gap-3 lg:col-span-7 lg:col-start-6">
             {documents.map((doc) => (
-              <li key={doc} className="card reveal-sm flex items-center gap-4 p-4 md:p-5">
+              <li key={doc} className="card fx-in flex items-center gap-4 p-4 md:p-5">
                 <span className="bg-brand-soft text-brand grid size-10 shrink-0 place-items-center rounded-full">
                   <Check className="size-5" aria-hidden="true" />
                 </span>
@@ -174,7 +174,7 @@ export default async function AdmissionPage({ params }: PageProps<"/[locale]/adm
         <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-14">
           <div className="relative lg:col-span-5">
             {/*
-             * Зелёное свечение за аркой — глубина без второй фотографии.
+             * Зелёное свечение за кадром — глубина без второй фотографии.
              *
              * Вылет привязан к полям `shell`: до 48rem они 1.25rem, поэтому
              * там свечение расходится на 1rem, дальше — на 1.5rem при полях
@@ -187,7 +187,7 @@ export default async function AdmissionPage({ params }: PageProps<"/[locale]/adm
               className="deco-glow absolute -inset-4 -z-10 opacity-40 md:-inset-6"
             />
 
-            <figure className="arch reveal-zoom bg-paper-sunken shadow-raised relative aspect-4/5 w-full">
+            <figure className="fx-mask bg-paper-sunken shadow-raised relative aspect-4/5 w-full overflow-hidden rounded-xs">
               <Photo
                 src={STOCK_IMAGES.lifeKids}
                 alt={a.tryImageAlt}

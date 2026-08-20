@@ -1,26 +1,30 @@
 import Link from "next/link";
-import { ArrowRight, Award, Play } from "lucide-react";
+import { ArrowRight, Award } from "lucide-react";
 
 import { Photo } from "@/components/site/photo";
 import { buttonVariants } from "@/components/ui/button";
 import { pickI18n } from "@/lib/content/i18n-value";
 import type { SiteContacts } from "@/lib/content/site-settings";
-import { mediaUrl } from "@/lib/content/storage";
 import { STOCK_IMAGES, type ImageSource } from "@/lib/content/stock-images";
+import { mediaUrl } from "@/lib/content/storage";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries/ru";
 import { routes } from "@/lib/routes";
 
 /**
- * Обложка главной.
+ * Обложка главной — кадр во весь экран.
  *
- * Заголовок — текст, а не картинка: он и есть LCP-элемент страницы и
- * появляется сразу после первого байта CSS, не дожидаясь ни одной фотографии.
+ * Фотография занимает всё окно, текст лежит поверх неё. Это и есть тот приём,
+ * ради которого выбрана тёмная подача: снимок работает как кадр из фильма,
+ * а не как картинка в колонке рядом с текстом.
  *
- * Появление блоков разведено по времени вручную, а не через scroll-driven
- * анимацию: обложка уже в кадре при загрузке, и «появление при прокрутке»
- * для неё отработало бы мгновенно и вхолостую. Задержки в миллисекундах —
- * ровно тот каскад, за которым глаз успевает пройти сверху вниз.
+ * Читаемость держится не на плашке под текстом, а на градиентной ширме:
+ * сплошной прямоугольник за буквами закрыл бы половину кадра и вернул бы
+ * страницу к виду «текст слева, картинка справа».
+ *
+ * При прокрутке кадр медленно наезжает и гаснет — страница уходит под
+ * следующий раздел. Считает это сама прокрутка (`animation-timeline: scroll()`),
+ * поэтому ни одного обработчика в JS и ни одного пересчёта в главном потоке.
  */
 export function HomeHero({
   locale,
@@ -33,70 +37,65 @@ export function HomeHero({
 }) {
   const hero = t.home.hero;
   /*
-   * В настройках лежит путь внутри бакета, а не готовая ссылка — mediaUrl
-   * достраивает её до адреса хранилища. Без этого шага next/image получал
-   * строку «site/hero-classroom.jpg» и падал: относительный путь обязан
-   * начинаться со слэша.
+   * В базе лежит путь внутри бакета, а не ссылка: смена проекта Supabase или
+   * домена не должна превращать все фотографии школы в битые картинки.
+   * Поэтому путь всегда прогоняется через mediaUrl — next/image принимает
+   * либо абсолютный адрес, либо локальный импорт, а «site/hero.jpg» роняет
+   * страницу целиком.
    */
   const heroImage: ImageSource = mediaUrl(contacts.heroImage) ?? STOCK_IMAGES.homeHero;
 
   return (
-    <section className="relative overflow-hidden pb-20 md:pb-28">
-      {/* Тёплая подложка за обложкой: она отделяет первый экран от остальной
-          страницы мягче, чем линейка, и не добавляет ни одного элемента в DOM. */}
-      <div aria-hidden="true" className="bg-paper-tint absolute inset-x-0 top-0 -z-10 h-[78%]" />
-      <div
-        aria-hidden="true"
-        className="deco-dots text-accent absolute inset-x-0 top-0 -z-10 h-[78%]"
-      />
+    <section className="relative isolate">
+      {/* ---------------------------------------------------------- Кадр */}
+      <div className="relative flex min-h-[92svh] flex-col justify-end overflow-hidden">
+        <div aria-hidden="true" className="fx-hero absolute inset-0 -z-20">
+          <Photo src={heroImage} alt="" priority className="object-cover" sizes="100vw" />
+        </div>
 
-      <div className="shell grid items-center gap-12 pt-12 md:pt-16 lg:grid-cols-12 lg:gap-10 lg:pt-20">
-        {/* ------------------------------------------------------------ Текст */}
-        <div className="lg:col-span-7">
-          <p
-            className="border-gold/35 bg-gold-soft text-caption text-highlight inline-flex animate-[rise_600ms_var(--ease-entrance)_both] items-center gap-2 rounded-full border px-3.5 py-1.5 font-semibold"
-            style={{ animationDelay: "40ms" }}
-          >
-            <span aria-hidden="true" className="bg-gold size-1.5 rounded-full" />
+        {/*
+         * Две ширмы вместо одной. Нижняя ведёт кадр к фону страницы, чтобы
+         * обложка не обрывалась линией; левая приглушает ту половину, где
+         * лежит текст, и оставляет правую почти нетронутой — лицо ребёнка
+         * на снимке видно целиком.
+         */}
+        <div
+          aria-hidden="true"
+          className="from-paper via-paper/70 absolute inset-0 -z-10 bg-gradient-to-t via-35% to-transparent"
+        />
+        <div
+          aria-hidden="true"
+          className="from-paper/85 absolute inset-0 -z-10 bg-gradient-to-r to-transparent to-60%"
+        />
+
+        <div className="shell relative w-full pt-32 pb-16 md:pb-24">
+          <p className="border-accent/30 bg-accent-soft text-accent text-caption fx-in mb-8 inline-flex items-center gap-2 rounded-xs border px-3 py-1.5 font-semibold">
+            <span aria-hidden="true" className="bg-accent size-1.5 rounded-full" />
             {hero.badge}
           </p>
 
-          <h1
-            className="text-display text-ink mt-6 animate-[rise_600ms_var(--ease-entrance)_both]"
-            style={{ animationDelay: "110ms" }}
-          >
-            {hero.titleLead}{" "}
-            {/* Акцентное слово подчёркнуто золотой волной — приём вынесен в
-                псевдоэлемент, чтобы подчёркивание тянулось за переносом строки. */}
-            <span className="text-accent relative whitespace-nowrap">
-              {hero.titleAccent}
-              <span
-                aria-hidden="true"
-                className="bg-gold/45 absolute inset-x-0 -bottom-1 h-2.5 rounded-full md:-bottom-2 md:h-3.5"
-              />
+          {/*
+           * Заголовок выезжает строка за строкой из-под невидимого края.
+           * Каждая строка — своя пара «маска + содержимое»: маске нужен
+           * overflow, иначе буквы всплывали бы в воздухе, а не появлялись.
+           */}
+          <h1 className="text-display max-w-5xl">
+            <span className="block overflow-hidden pb-[0.12em]">
+              <span className="fx-line">{hero.titleLead}</span>
+            </span>
+            <span className="block overflow-hidden pb-[0.12em]">
+              <span className="fx-line text-accent">{hero.titleAccent}</span>
             </span>
           </h1>
 
-          <p
-            className="text-lead text-ink-muted mt-7 max-w-xl animate-[rise_600ms_var(--ease-entrance)_both]"
-            style={{ animationDelay: "180ms" }}
-          >
-            {hero.lead}
-          </p>
+          <p className="text-lead text-ink-muted fx-in mt-8 max-w-xl">{hero.lead}</p>
 
-          {/* На узком экране кнопки идут в столбик во всю ширину — так по ним
-              проще попасть большим пальцем; с 400px они помещаются в строку. */}
-          <div
-            className="mt-9 flex animate-[rise_600ms_var(--ease-entrance)_both] flex-col gap-3 min-[400px]:flex-row min-[400px]:flex-wrap"
-            style={{ animationDelay: "250ms" }}
-          >
+          <div className="fx-in mt-10 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:flex-wrap">
             <Link
               href={routes.admission(locale)}
               className={buttonVariants({ variant: "gold", size: "lg", className: "group" })}
             >
               {hero.ctaPrimary}
-              {/* Стрелка подаётся вперёд под курсором: движение подсказывает,
-                  что ссылка ведёт дальше, а не открывает диалог. */}
               <ArrowRight
                 className="size-4 transition-transform duration-[240ms] ease-(--ease-entrance) group-hover:translate-x-1"
                 aria-hidden="true"
@@ -107,71 +106,38 @@ export function HomeHero({
               href={routes.admission(locale)}
               className={buttonVariants({ variant: "secondary", size: "lg" })}
             >
-              <Play className="size-4" aria-hidden="true" />
               {hero.ctaSecondary}
             </Link>
           </div>
 
-          <p
-            className="text-small text-ink-faint mt-7 animate-[fade-in_600ms_var(--ease-entrance)_both]"
-            style={{ animationDelay: "330ms" }}
-          >
-            {hero.trust}
-          </p>
-        </div>
+          <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
+            <p className="text-small text-ink-faint">{hero.trust}</p>
 
-        {/* ------------------------------------------------------ Фотография */}
-        <div className="lg:col-span-5 lg:pl-4">
-          <div
-            className="relative mx-auto max-w-md animate-[rise_800ms_var(--ease-entrance)_both] lg:mr-0 lg:max-w-none"
-            style={{ animationDelay: "150ms" }}
-          >
-            {/* Зелёное свечение за аркой — глубина без второй фотографии. */}
-            <div aria-hidden="true" className="deco-glow absolute -inset-6 -z-10 opacity-40" />
-
-            <figure className="arch bg-paper-sunken shadow-float relative aspect-4/5 w-full">
-              <Photo
-                src={heroImage}
-                alt={hero.imageAlt}
-                priority
-                sizes="(min-width: 1024px) 46vw, (min-width: 640px) 60vw, 90vw"
-              />
-            </figure>
-
-            {/* Плашка с результатом. Она перекрывает угол фотографии — это и
-                делает композицию объёмной, а не «картинка в рамке». */}
-            <div className="card shadow-float absolute -bottom-6 -left-4 flex max-w-[17rem] items-start gap-3 p-4 md:-left-8 md:p-5">
-              <span className="icon-tile bg-gold-soft text-highlight size-11">
-                <Award className="size-5" aria-hidden="true" />
-              </span>
+            <p className="border-rule text-small text-ink-muted flex items-center gap-2.5 border-l pl-4">
+              <Award className="text-accent size-4 shrink-0" aria-hidden="true" />
               <span>
-                <span className="text-caption text-ink-faint block font-semibold tracking-wide uppercase">
-                  {hero.plateKicker}
-                </span>
-                <span className="text-small text-ink mt-1 block font-semibold">
-                  {hero.plateText}
-                </span>
+                <span className="text-ink font-semibold">{hero.plateKicker}</span>
+                {" — "}
+                {hero.plateText}
               </span>
-            </div>
+            </p>
           </div>
         </div>
       </div>
 
-      {/* ----------------------------------------------------------- Цифры */}
+      {/* --------------------------------------------------------- Цифры */}
       {contacts.stats.length > 0 ? (
-        <div className="shell mt-20 md:mt-24">
-          <dl className="card shadow-raised grid grid-cols-2 gap-y-8 p-7 md:grid-cols-4 md:p-9">
+        <div className="shell">
+          <dl className="border-rule grid grid-cols-2 gap-y-10 border-t py-10 md:grid-cols-4 md:py-14">
             {contacts.stats.map((stat, index) => (
               <div
                 key={index}
-                className="md:border-rule flex flex-col gap-1.5 px-2 text-center md:border-r md:last:border-r-0"
+                className="fx-in border-rule flex flex-col gap-2 md:border-l md:px-6 md:first:border-l-0 md:first:pl-0"
               >
-                <dd className="font-display text-h1 text-accent order-1 leading-none" data-numeric>
+                <dd className="metric text-h1 text-ink leading-none" data-numeric>
                   {stat.value}
                 </dd>
-                <dt className="text-small text-ink-muted order-2">
-                  {pickI18n(stat.label, locale)}
-                </dt>
+                <dt className="text-small text-ink-muted">{pickI18n(stat.label, locale)}</dt>
               </div>
             ))}
           </dl>

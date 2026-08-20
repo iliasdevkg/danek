@@ -96,7 +96,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
               className="deco-glow absolute -inset-6 -z-10 hidden opacity-40 lg:block"
             />
 
-            <figure className="arch reveal-zoom bg-paper-sunken shadow-raised relative aspect-4/5 w-full">
+            <figure className="fx-mask bg-paper-sunken shadow-raised relative aspect-4/5 w-full overflow-hidden rounded-xs">
               <Photo
                 src={STOCK_IMAGES.aboutMission}
                 alt={a.missionImageAlt}
@@ -119,7 +119,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
           {approach.map((item) => (
             <li
               key={item.title}
-              className="card reveal group hover:border-rule-strong flex gap-5 p-6 transition-colors duration-[240ms] md:p-7"
+              className="card fx-in group hover:border-rule-strong flex gap-5 p-6 transition-colors duration-[240ms] md:p-7"
             >
               <span className="icon-tile group-hover:bg-accent transition-colors duration-[240ms] group-hover:text-white">
                 <item.icon className="size-5" aria-hidden="true" />
@@ -197,7 +197,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
 
           <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
             {teachers.map((teacher) => (
-              <div key={teacher.id} className="reveal">
+              <div key={teacher.id} className="fx-in">
                 <TeacherCard teacher={teacher} />
               </div>
             ))}

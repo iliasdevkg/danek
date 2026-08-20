@@ -31,7 +31,7 @@ export function FeatureStrip({ t }: { t: Dictionary }) {
         {items.map((item) => (
           <li
             key={item.title}
-            className="reveal-sm group bg-paper-raised hover:bg-paper-sunken flex flex-col gap-3 p-6 transition-colors duration-[240ms]"
+            className="fx-in group bg-paper-raised hover:bg-paper-sunken flex flex-col gap-3 p-6 transition-colors duration-[240ms]"
           >
             <span className="icon-tile group-hover:bg-accent transition-colors duration-[240ms] group-hover:text-white">
               <item.icon className="size-5" aria-hidden="true" />

@@ -138,16 +138,21 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       {/* ------------------------------------------------------------ О школе */}
       <section className="shell section-t">
         <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-14">
-          {/* Коллаж: крупная арка и перекрывающий её угол квадратом. Тот же
+          {/* Коллаж: крупный кадр и перекрывающий его угол квадратом. Тот же
               приём, что на обложке, — раздел читается как продолжение
               разговора, а не как новый разворот. */}
           <div className="relative lg:col-span-5">
-            <figure className="arch reveal-zoom bg-paper-sunken shadow-raised relative aspect-4/5 w-full">
-              <Photo
-                src={STOCK_IMAGES.aboutMission}
-                alt={home.manifesto.imageAlt}
-                sizes="(min-width: 1024px) 38vw, 90vw"
-              />
+            {/* Кадр раскрывается снизу вверх, а его содержимое едет параллаксом:
+                внутренний слой намеренно больше рамки на 14% с каждой стороны,
+                иначе сдвиг обнажил бы край фотографии. */}
+            <figure className="fx-mask bg-paper-sunken relative aspect-4/5 w-full overflow-hidden rounded-xs">
+              <div className="fx-parallax absolute inset-[-14%]">
+                <Photo
+                  src={STOCK_IMAGES.aboutMission}
+                  alt={home.manifesto.imageAlt}
+                  sizes="(min-width: 1024px) 38vw, 90vw"
+                />
+              </div>
             </figure>
 
             <figure className="border-paper bg-paper-sunken shadow-float absolute -right-3 -bottom-8 hidden aspect-square w-40 overflow-hidden rounded-2xl border-4 sm:block md:w-48 lg:-right-8">
@@ -264,7 +269,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             {principles.map((item, index) => (
               <li
                 key={item.title}
-                className="reveal-sm border-rule group flex gap-5 border-b py-7 first:border-t sm:gap-8"
+                className="fx-in border-rule group flex gap-5 border-b py-7 first:border-t sm:gap-8"
               >
                 <span
                   aria-hidden="true"
@@ -327,7 +332,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 {achievements.map((item) => (
                   <li
                     key={item.title}
-                    className="reveal-sm rounded-xl border border-white/12 bg-white/5 p-6 transition-colors duration-[240ms] hover:border-white/25 hover:bg-white/10"
+                    className="fx-in rounded-xl border border-white/12 bg-white/5 p-6 transition-colors duration-[240ms] hover:border-white/25 hover:bg-white/10"
                   >
                     <span className="icon-tile bg-gold/15 text-gold">
                       <item.icon className="size-5" aria-hidden="true" />
@@ -361,7 +366,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
           <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
             {teachers.map((teacher) => (
-              <div key={teacher.id} className="reveal">
+              <div key={teacher.id} className="fx-in">
                 <TeacherCard teacher={teacher} />
               </div>
             ))}
@@ -390,7 +395,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           {/* Крупная цитата стоит на золотой подложке: это единственное место
               на странице, где золото красит не действие, а слово родителя —
               и потому не спорит с кнопкой «Подать заявку». */}
-          <figure className="reveal border-gold/25 bg-gold-soft/45 relative flex flex-col gap-8 rounded-2xl border p-8 lg:col-span-7 lg:p-12">
+          <figure className="fx-in border-gold/25 bg-gold-soft/45 relative flex flex-col gap-8 rounded-2xl border p-8 lg:col-span-7 lg:p-12">
             <Quote
               aria-hidden="true"
               className="text-gold/25 absolute top-8 right-8 size-20 lg:size-28"

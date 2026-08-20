@@ -87,7 +87,7 @@ export default async function ContactsPage({ params }: PageProps<"/[locale]/cont
           // почти всю высоту — знак школы перестаёт читаться как арка.
           // Короткой шапку на телефоне держит ширина, а не пропорция:
           // 176px вместо всей колонки — телефон школы виден почти сразу.
-          <figure className="arch bg-paper-sunken shadow-raised relative aspect-4/5 w-44 sm:w-52 lg:ml-auto lg:w-full lg:max-w-[17rem]">
+          <figure className="bg-paper-sunken shadow-raised relative aspect-4/5 w-44 overflow-hidden rounded-xs sm:w-52 lg:ml-auto lg:w-full lg:max-w-[17rem]">
             <Photo
               src={STOCK_IMAGES.aboutCampus}
               alt={page.imageAlt}
@@ -108,7 +108,7 @@ export default async function ContactsPage({ params }: PageProps<"/[locale]/cont
               // колонке рядом с формой каждая карточка получает всю ширину.
               <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
                 {phones.length > 0 ? (
-                  <li className="card reveal-sm p-6">
+                  <li className="card fx-in p-6">
                     <span className="icon-tile">
                       <Phone className="size-5" aria-hidden="true" />
                     </span>
@@ -131,7 +131,7 @@ export default async function ContactsPage({ params }: PageProps<"/[locale]/cont
                 ) : null}
 
                 {contacts.email ? (
-                  <li className="card reveal-sm p-6">
+                  <li className="card fx-in p-6">
                     <span className="icon-tile">
                       <Mail className="size-5" aria-hidden="true" />
                     </span>
@@ -147,7 +147,7 @@ export default async function ContactsPage({ params }: PageProps<"/[locale]/cont
                 ) : null}
 
                 {address ? (
-                  <li className="card reveal-sm p-6">
+                  <li className="card fx-in p-6">
                     <span className="icon-tile">
                       <MapPin className="size-5" aria-hidden="true" />
                     </span>
@@ -159,7 +159,7 @@ export default async function ContactsPage({ params }: PageProps<"/[locale]/cont
                 ) : null}
 
                 {hours ? (
-                  <li className="card reveal-sm p-6">
+                  <li className="card fx-in p-6">
                     <span className="icon-tile">
                       <Clock className="size-5" aria-hidden="true" />
                     </span>
@@ -169,7 +169,7 @@ export default async function ContactsPage({ params }: PageProps<"/[locale]/cont
                 ) : null}
 
                 {socials.length > 0 ? (
-                  <li className="card reveal-sm p-6 sm:col-span-2 lg:col-span-1">
+                  <li className="card fx-in p-6 sm:col-span-2 lg:col-span-1">
                     <h2 className="text-kicker text-ink-faint uppercase">{page.socialTitle}</h2>
 
                     <ul className="mt-4 flex flex-wrap gap-2.5">
@@ -224,7 +224,7 @@ export default async function ContactsPage({ params }: PageProps<"/[locale]/cont
       {/* --------------------------------------------------------------- Карта */}
       {mapHref ? (
         <section className="shell section-t">
-          <div className="card reveal flex flex-col gap-6 p-6 sm:p-8 md:flex-row md:items-center md:justify-between md:gap-10 md:p-10">
+          <div className="card fx-in flex flex-col gap-6 p-6 sm:p-8 md:flex-row md:items-center md:justify-between md:gap-10 md:p-10">
             <div className="flex gap-5">
               <span className="icon-tile">
                 <MapPin className="size-5" aria-hidden="true" />

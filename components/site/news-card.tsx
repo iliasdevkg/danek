@@ -16,7 +16,7 @@ import { routes } from "@/lib/routes";
  */
 export function NewsCard({ item, locale, more }: { item: News; locale: Locale; more: string }) {
   return (
-    <article className="reveal h-full">
+    <article className="fx-in h-full">
       <Link
         href={routes.newsItem(locale, item.slug)}
         className="card hover-lift group flex h-full flex-col overflow-hidden focus-visible:outline-offset-4"

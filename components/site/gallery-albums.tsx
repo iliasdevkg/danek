@@ -149,7 +149,7 @@ export function GalleryAlbums({
                         isCover
                           ? ["hover-lift", coverSpan]
                           : [
-                              "reveal-sm",
+                              "fx-in",
                               "transition-[border-color,box-shadow] duration-[240ms] ease-(--ease-entrance)",
                               "hover:border-rule-strong hover:shadow-card",
                             ],

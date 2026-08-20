@@ -16,7 +16,15 @@ import { Spinner } from "./spinner";
 const buttonStyles = cva(
   [
     "relative inline-flex select-none items-center justify-center gap-2 text-center text-balance",
-    "rounded-full font-semibold",
+    /*
+     * Форма прямоугольная, а не таблетка.
+     *
+     * Скруглённая до круга кнопка читается как игровая — это была одна
+     * из главных примет «детского» вида. Радиус берётся из переменной,
+     * поэтому на витрине угол почти прямой, а в админке остаётся мягким:
+     * инструменту дружелюбность идёт, оформленной странице — нет.
+     */
+    "rounded-sm font-semibold",
     "transition-[background-color,border-color,color,box-shadow,transform,opacity]",
     "duration-[180ms] ease-(--ease-standard)",
     // Нажатие ощущается физически: кнопка проседает на пиксель.
@@ -31,11 +39,15 @@ const buttonStyles = cva(
         primary: "bg-accent text-accent-fg shadow-soft hover:bg-accent-hover hover:shadow-card",
         /**
          * Целевое действие витрины — «подать заявку».
-         * Золото на сайте всегда означает ровно одно: отсюда начинается приём.
+         *
+         * На тёмной витрине переменная `gold` указывает на белый: белое
+         * на почти чёрном — самый сильный контраст, какой бывает на экране,
+         * и ему не нужен цвет, чтобы его заметили. В админке та же
+         * переменная остаётся жёлтой.
          */
-        gold: "bg-gold text-gold-fg shadow-soft hover:shadow-raised hover:brightness-[1.05]",
+        gold: "bg-gold text-gold-fg hover:brightness-[0.92]",
         secondary:
-          "border border-rule-strong bg-paper-raised text-ink hover:border-accent hover:bg-accent-soft hover:text-accent",
+          "border-rule-strong text-ink hover:border-ink hover:bg-ink/5 border bg-transparent",
         /** На тёмной плашке: контурная кнопка светлым по синему. */
         inverse:
           "border border-white/30 bg-white/5 text-white hover:border-white/70 hover:bg-white/15",

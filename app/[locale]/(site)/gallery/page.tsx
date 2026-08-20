@@ -52,10 +52,7 @@ export default async function GalleryPage({ params }: PageProps<"/[locale]/galle
         title={t.galleryPage.title}
         lead={t.galleryPage.lead}
         aside={
-          // Единственная арка на странице — знак школы держит один кадр в шапке.
-          // Дальше идут прямоугольные плитки альбомов: если купол повторить
-          // шестнадцать раз, он перестанет читаться как знак.
-          <figure className="arch bg-paper-sunken shadow-raised relative mx-auto aspect-4/5 w-full max-w-64 lg:mr-0 lg:ml-auto lg:max-w-72">
+          <figure className="bg-paper-sunken shadow-raised relative mx-auto aspect-4/5 w-full max-w-64 overflow-hidden rounded-xs lg:mr-0 lg:ml-auto lg:max-w-72">
             <Photo
               src={STOCK_IMAGES.lifeCelebration}
               alt={t.galleryPage.heroImageAlt}

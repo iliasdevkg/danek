@@ -28,7 +28,7 @@ export type NotFoundStrings = {
  *
  * Заблудившийся посетитель — это почти всегда родитель, пришедший по старой
  * ссылке из мессенджера. Поэтому здесь не системное сообщение, а разворот
- * школьного сайта: крупный заголовок, фотография в арке и три ссылки туда,
+ * школьного сайта: крупный заголовок, фотография во всю колонку и три ссылки туда,
  * куда он с наибольшей вероятностью шёл.
  *
  * Анимации заданы задержками, а не появлением при прокрутке: страница целиком
@@ -137,7 +137,7 @@ export function NotFoundContent({ strings }: { strings: Record<Locale, NotFoundS
 
             {/* 480px — ширина пяти колонок из двенадцати в контейнере 1280px;
                 ниже lg рамку ограничивает max-w-72. */}
-            <figure className="arch bg-paper-sunken shadow-raised relative aspect-4/5 w-full">
+            <figure className="bg-paper-sunken shadow-raised relative aspect-4/5 w-full overflow-hidden rounded-xs">
               <Photo
                 src={STOCK_IMAGES.homeHeroKids}
                 alt={s.imageAlt}

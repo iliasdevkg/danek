@@ -5,15 +5,15 @@ import type { TeacherCard as Teacher } from "@/lib/content/teachers";
 /**
  * Карточка педагога.
  *
- * Портрет строго вертикальный и забран в арку — так лица выстраиваются
- * в ровный ряд, даже когда школа загрузила снимки разного размера, а сама
- * сетка педагогов читается как один блок, а не набор прямоугольников.
+ * Портрет строго вертикальный — так лица выстраиваются в ровный ряд, даже
+ * когда школа загрузила снимки разного размера, а сетка педагогов читается
+ * как один блок, а не набор отдельных прямоугольников.
  * Нет фото — стоят инициалы на фирменном фоне, а не пустое место.
  */
 export function TeacherCard({ teacher }: { teacher: Teacher }) {
   return (
     <article className="group text-center">
-      <div className="arch bg-accent-soft shadow-card group-hover:shadow-raised relative mx-auto aspect-3/4 w-full transition-shadow duration-[320ms]">
+      <div className="bg-accent-soft shadow-card group-hover:shadow-raised relative mx-auto aspect-3/4 w-full overflow-hidden rounded-xs transition-shadow duration-[320ms]">
         {teacher.photoUrl ? (
           <Photo
             src={teacher.photoUrl}

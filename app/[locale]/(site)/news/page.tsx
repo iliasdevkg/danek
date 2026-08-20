@@ -64,7 +64,7 @@ export default async function NewsPage({ params }: PageProps<"/[locale]/news">) 
         aside={
           /* Арка — знак школы. На этой странице она единственная и стоит
              в шапке: ниже всё место занимают обложки самих новостей. */
-          <figure className="arch bg-paper-sunken shadow-raised relative mx-auto aspect-4/5 w-full max-w-64 lg:mr-0 lg:ml-auto lg:max-w-72">
+          <figure className="bg-paper-sunken shadow-raised relative mx-auto aspect-4/5 w-full max-w-64 overflow-hidden rounded-xs lg:mr-0 lg:ml-auto lg:max-w-72">
             <Photo
               src={STOCK_IMAGES.lifeKids}
               alt={page.heroImageAlt}

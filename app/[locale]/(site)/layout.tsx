@@ -22,10 +22,26 @@ export default async function SiteLayout({ children, params }: LayoutProps<"/[lo
   const [t, contacts] = await Promise.all([getDictionary(locale), getSiteContacts()]);
 
   return (
-    <>
+    /*
+     * `data-surface="cinema"` включает тёмный набор переменных из globals.css.
+     * Он стоит на обёртке витрины, а не на <html>: за её пределами — в CRM
+     * и кабинетах — продолжает действовать светлый набор, и переключатель
+     * темы там работает как прежде.
+     *
+     * Фон задан здесь же явно: элемент не на всю высоту документа, и без
+     * заливки под коротким разделом просвечивал бы белый <body>.
+     */
+    <div data-surface="cinema" className="bg-paper text-ink min-h-dvh">
       <a href="#main" className="skip-link">
         {t.nav.skipToContent}
       </a>
+
+      {/* Полоса прочитанного под шапкой. Её ширину двигает сама прокрутка —
+          ни обработчика, ни пересчёта на каждый кадр. */}
+      <div
+        aria-hidden="true"
+        className="bg-accent fx-progress fixed inset-x-0 top-0 z-50 h-px origin-left"
+      />
 
       <SiteHeader locale={locale} t={t} contacts={contacts} />
 
@@ -36,6 +52,6 @@ export default async function SiteLayout({ children, params }: LayoutProps<"/[lo
       <SiteFooter locale={locale} t={t} contacts={contacts} />
 
       <SchoolJsonLd locale={locale} t={t} contacts={contacts} />
-    </>
+    </div>
   );
 }

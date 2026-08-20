@@ -5,7 +5,6 @@ import { buttonVariants } from "@/components/ui/button";
 import { LangSwitcher } from "@/components/site/lang-switcher";
 import { MobileNav } from "@/components/site/mobile-nav";
 import { SiteNav } from "@/components/site/site-nav";
-import { ThemeToggle } from "@/components/site/theme-toggle";
 import { Wordmark } from "@/components/site/wordmark";
 import { pickI18n } from "@/lib/content/i18n-value";
 import { formatPhone, type SiteContacts } from "@/lib/content/site-settings";
@@ -125,8 +124,10 @@ export function SiteHeader({
 
           <div className="flex items-center gap-1">
             {/* На 375px в строке уже нет места — язык переезжает в меню. */}
+            {/* Переключателя темы здесь нет намеренно: витрина существует только
+                в тёмном варианте — см. комментарий к `[data-surface="cinema"]`
+                в globals.css. В админке он остался, там он к месту. */}
             <LangSwitcher current={locale} label={t.locale.switch} className="hidden sm:flex" />
-            <ThemeToggle labels={t.theme} />
 
             <Link
               href={routes.admission(locale)}

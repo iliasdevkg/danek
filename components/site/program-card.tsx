@@ -8,9 +8,8 @@ import type { ImageSource } from "@/lib/content/stock-images";
 /**
  * Карточка ступени обучения.
  *
- * Фотография забрана в арку — тот же знак, что держит обложку и эмблему
- * школы. Вся карточка целиком является ссылкой: попасть по ней пальцем на
- * телефоне проще, чем по строке «подробнее» в углу.
+ * Вся карточка целиком является ссылкой: попасть по ней пальцем на телефоне
+ * проще, чем по строке «подробнее» в углу.
  */
 export function ProgramCard({
   grades,
@@ -30,7 +29,7 @@ export function ProgramCard({
   more: string;
 }) {
   return (
-    <article className="reveal">
+    <article className="fx-in">
       <Link
         href={href}
         className="card hover-lift group flex h-full flex-col overflow-hidden focus-visible:outline-offset-4"
