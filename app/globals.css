@@ -78,6 +78,17 @@
   --shadow-lg: 0 18px 40px -14px rgb(14 27 52 / 0.16), 0 6px 14px -8px rgb(14 27 52 / 0.08);
   --shadow-xl: 0 34px 70px -22px rgb(14 27 52 / 0.24), 0 12px 26px -14px rgb(14 27 52 / 0.12);
   --shadow-overlay: var(--shadow-xl);
+
+  /*
+   * Отдельные тени для админки.
+   *
+   * Фон приложения — `--paper-sunken` (#f2f6fc), а не белый. На нём
+   * `--shadow-sm`, рассчитанная под белую витрину, практически не видна:
+   * карточка не отрывается от подложки и весь экран читается как одно
+   * серое поле. Здесь тень заметно шире и мягче по краю.
+   */
+  --shadow-app: 0 1px 2px rgb(14 27 52 / 0.04), 0 6px 16px -8px rgb(14 27 52 / 0.1);
+  --shadow-app-pop: 0 10px 30px -12px rgb(14 27 52 / 0.22), 0 2px 8px -4px rgb(14 27 52 / 0.1);
 }
 
 [data-theme="dark"] {
@@ -134,6 +145,9 @@
   --shadow-lg: 0 18px 40px -14px rgb(0 0 0 / 0.6);
   --shadow-xl: 0 34px 70px -22px rgb(0 0 0 / 0.7);
   --shadow-overlay: var(--shadow-xl);
+
+  --shadow-app: 0 1px 2px rgb(0 0 0 / 0.5), 0 6px 16px -8px rgb(0 0 0 / 0.6);
+  --shadow-app-pop: 0 10px 30px -12px rgb(0 0 0 / 0.7), 0 2px 8px -4px rgb(0 0 0 / 0.5);
 }
 
 /* ---------------------------------------------------------------------------
@@ -184,6 +198,26 @@
   --color-danger-soft: var(--danger-soft);
 
   --color-overlay: var(--overlay);
+
+  /*
+   * Палитра диаграмм.
+   *
+   * Ссылается на фирменные цвета, а не задаёт свои: `--accent`, `--brand` и
+   * `--gold` уже перекладываются в тёмной теме, поэтому графики темнеют сами,
+   * без единой строки на эту тему в компонентах.
+   *
+   * Правило про золото: на белом у него контраст 1.9:1. Им можно заливать
+   * площади от четырёх пикселей толщиной — сегмент кольца, столбец — и нельзя
+   * рисовать ни линию в один пиксель, ни текст.
+   */
+  --color-chart-1: var(--accent);
+  --color-chart-2: var(--brand);
+  --color-chart-3: var(--gold);
+  --color-chart-4: color-mix(in oklab, var(--accent) 55%, var(--paper));
+  --color-chart-5: color-mix(in oklab, var(--brand) 55%, var(--paper));
+  --color-chart-6: var(--ink-faint);
+  --color-chart-grid: var(--rule);
+  --color-chart-axis: var(--ink-faint);
 
   /* Шрифты приходят переменными из next/font — самохост, ноль запросов наружу.
      Manrope набирает заголовки: геометричный, но с мягкими окончаниями —
@@ -254,6 +288,64 @@
   --text-kicker--line-height: 1.2;
   --text-kicker--letter-spacing: 0.16em;
   --text-kicker--font-weight: 700;
+
+  /*
+   * Шкала админки — фиксированная, и это не вкусовщина.
+   *
+   * Витрине текучий кегль нужен: обложку смотрят целиком, и заголовок обязан
+   * расти вместе с окном. Админку читают иначе — в неё смотрят весь рабочий
+   * день с одного расстояния, и `clamp(…vw…)` означал бы, что одна и та же
+   * таблица набрана по-разному на ноутбуке и на большом мониторе. Плотность,
+   * под которую выверены строки и отступы, при этом рассыпается.
+   *
+   * Имена новые, а не переопределение существующих переменных под `[data-app]`.
+   * `EmptyState`, `DialogTitle` и `Badge` общие для витрины и админки, и
+   * «`text-h3` значит разное в зависимости от того, где смонтирован компонент» —
+   * худший вид ошибки в общей библиотеке: она не воспроизводится на месте.
+   */
+  --text-app-xs: 0.71875rem;
+  --text-app-xs--line-height: 1.4;
+
+  --text-app-sm: 0.8125rem;
+  --text-app-sm--line-height: 1.45;
+
+  --text-app: 0.875rem;
+  --text-app--line-height: 1.5;
+
+  /* Заголовок колонки, подпись поля, шапка группы в меню. */
+  --text-app-label: 0.8125rem;
+  --text-app-label--line-height: 1.3;
+  --text-app-label--letter-spacing: 0.01em;
+  --text-app-label--font-weight: 600;
+
+  /* Заголовок карточки внутри страницы. */
+  --text-app-heading: 0.9375rem;
+  --text-app-heading--line-height: 1.35;
+  --text-app-heading--font-weight: 600;
+
+  /* Заголовок страницы админки. Двадцать пикселей вместо нынешних шестидесяти. */
+  --text-app-title: 1.125rem;
+  --text-app-title--line-height: 1.3;
+  --text-app-title--letter-spacing: -0.01em;
+  --text-app-title--font-weight: 700;
+
+  --text-app-metric: 1.75rem;
+  --text-app-metric--line-height: 1;
+  --text-app-metric--letter-spacing: -0.02em;
+  --text-app-metric--font-weight: 700;
+
+  --text-app-metric-lg: 2.125rem;
+  --text-app-metric-lg--line-height: 1;
+  --text-app-metric-lg--letter-spacing: -0.025em;
+  --text-app-metric-lg--font-weight: 700;
+
+  /* Размеры оболочки админки — в токенах, чтобы sticky-смещения и высота
+     бокового столбца считались от одного источника, а не от чисел в классах. */
+  --app-topbar-h: 3.5rem;
+  --app-sidebar-w: 16rem;
+  --app-sidebar-w-collapsed: 4.25rem;
+  --app-row-h-compact: 2.5rem;
+  --app-row-h-cozy: 3rem;
 
   /* Движение. Вход — экспонента с оттягом, стандарт — материал. */
   --ease-entrance: cubic-bezier(0.22, 1, 0.36, 1);
@@ -537,6 +629,12 @@
     outline-color: var(--gold);
   }
 
+  /* В админке отступ кольца меньше: в плотной таблице два пикселя вокруг
+     каждой ячейки съедают заметную часть строки. */
+  [data-app] :focus-visible {
+    outline-offset: 1px;
+  }
+
   ::selection {
     background-color: var(--gold);
     color: var(--gold-fg);
@@ -734,6 +832,100 @@
     transparent
   );
   filter: blur(8px);
+}
+
+/* ---------------------------------------------------------------------------
+   Поверхности админки
+
+   Витрина и админка делят один слой токенов, но не приёмы. Здесь нет ни
+   подъёма под курсором, ни появления при прокрутке: и то и другое на таблице
+   из двухсот строк читается как тяжесть, а не как отзывчивость.
+   --------------------------------------------------------------------------- */
+
+/* Карточка админки. От витринной `card` отличается тенью, рассчитанной под
+   синеватую подложку приложения, и тем, что не несёт никакого hover. */
+@utility app-card {
+  background-color: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-app);
+}
+
+/* Строка таблицы или списка. Анимируются только цвета — никакого transform:
+   строка не должна ездить под курсором, когда взгляд ведёт по ней слева направо. */
+@utility app-row {
+  transition:
+    background-color var(--dur-fast) var(--ease-standard),
+    border-color var(--dur-fast) var(--ease-standard);
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--paper-sunken);
+    }
+  }
+}
+
+/*
+ * Собственный контейнер прокрутки: боковое меню, тело таблицы, список палитры.
+ *
+ * `overscroll-behavior: contain` не даёт докрутке уехать на страницу под ним —
+ * иначе, долистав список до конца, пользователь неожиданно начинает скроллить
+ * всю админку. `scrollbar-gutter: stable` резервирует место под полосу, и
+ * содержимое не дёргается на пиксель, когда она появляется.
+ */
+@utility app-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+/* Пункт навигации: боковое меню, мобильное меню и результаты палитры —
+   один рецепт на три места, чтобы активное состояние везде выглядело одинаково. */
+@utility nav-item {
+  display: flex;
+  align-items: center;
+  gap: --spacing(2.5);
+  border-radius: var(--radius-sm);
+  padding: --spacing(2) --spacing(3);
+  font-size: var(--text-app);
+  line-height: var(--text-app--line-height);
+  color: var(--ink-muted);
+  transition:
+    background-color var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard);
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--paper-sunken);
+      color: var(--ink);
+    }
+  }
+
+  &[aria-current="page"] {
+    background-color: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+  }
+}
+
+/* Число-показатель. Табличные цифры обязательны: без них счётчик, меняясь
+   с 9 на 10, дёргает всю строку по ширине. */
+@utility metric {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Плитка иконки 32px — плотный вариант витринной `icon-tile` на 48px. */
+@utility icon-tile-sm {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: --spacing(8);
+  height: --spacing(8);
+  border-radius: var(--radius-sm);
+  background-color: var(--accent-soft);
+  color: var(--accent);
 }
 
 /*
