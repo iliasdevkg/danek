@@ -200,7 +200,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
       ) : null}
 
       {/* -------------------------------------------------------- Приглашение */}
-      <CtaBand locale={locale} t={t} contacts={contacts} />
+      <CtaBand locale={locale} t={t} contacts={contacts} title={a.ctaTitle} text={a.ctaText} />
     </>
   );
 }

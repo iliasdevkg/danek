@@ -14,7 +14,7 @@ import {
   UserRoundCheck,
   Users,
 } from "lucide-react";
-import type { ComponentType } from "react";
+import type { ComponentType, CSSProperties } from "react";
 
 import { CtaBand } from "@/components/site/cta-band";
 import { FaqList } from "@/components/site/faq-list";
@@ -221,18 +221,35 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             }
           />
 
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {stages.map((stage) => (
-              <ProgramCard
+          {/*
+           * На широком экране ступени собираются стопкой: каждая следующая
+           * карточка останавливается чуть ниже предыдущей и накрывает её.
+           * Это чистый `position: sticky` — ни анимации, ни обработчика,
+           * ни единого килобайта скриптов; смещение задаёт переменная `--i`.
+           *
+           * Приём работает только там, где карточки идут в столбик и у страницы
+           * есть куда прокручиваться, поэтому на планшете и телефоне остаётся
+           * обычная сетка: три липких блока на коротком экране просто
+           * перекрыли бы друг друга и спрятали содержимое.
+           */}
+          <div className="mt-12 grid gap-6 md:grid-cols-3 lg:block lg:gap-0 lg:space-y-6">
+            {stages.map((stage, index) => (
+              <div
                 key={stage.title}
-                grades={stage.grades}
-                title={stage.title}
-                text={stage.text}
-                image={stage.image}
-                imageAlt={stage.imageAlt}
-                href={stage.href}
-                more={home.programs.more}
-              />
+                className="lg:fx-stack"
+                style={{ "--i": index } as CSSProperties}
+              >
+                <ProgramCard
+                  layout="wide"
+                  grades={stage.grades}
+                  title={stage.title}
+                  text={stage.text}
+                  image={stage.image}
+                  imageAlt={stage.imageAlt}
+                  href={stage.href}
+                  more={home.programs.more}
+                />
+              </div>
             ))}
           </div>
         </div>

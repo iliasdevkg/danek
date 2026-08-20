@@ -85,7 +85,13 @@ export default async function GalleryPage({ params }: PageProps<"/[locale]/galle
         )}
       </section>
 
-      <CtaBand locale={locale} t={t} contacts={contacts} />
+      <CtaBand
+        locale={locale}
+        t={t}
+        contacts={contacts}
+        title={t.galleryPage.ctaTitle}
+        text={t.galleryPage.ctaText}
+      />
     </>
   );
 }

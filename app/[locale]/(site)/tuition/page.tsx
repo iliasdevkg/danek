@@ -332,7 +332,13 @@ export default async function TuitionPage({ params }: PageProps<"/[locale]/tuiti
       </section>
 
       {/* --------------------------------------------------------- Приглашение */}
-      <CtaBand locale={locale} t={t} contacts={contacts} />
+      <CtaBand
+        locale={locale}
+        t={t}
+        contacts={contacts}
+        title={page.askTitle}
+        text={page.askText}
+      />
     </>
   );
 }

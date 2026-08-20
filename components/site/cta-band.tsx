@@ -20,10 +20,23 @@ export function CtaBand({
   locale,
   t,
   contacts,
+  title,
+  text,
 }: {
   locale: Locale;
   t: Dictionary;
   contacts: SiteContacts;
+  /**
+   * Свой заголовок раздела.
+   *
+   * Один и тот же призыв стоял в конце всех десяти страниц. Родитель,
+   * дочитавший «Стоимость», и родитель, досмотревший галерею, находятся
+   * в разных точках решения, а получали одну фразу — и к пятой странице
+   * она перестаёт читаться вовсе. Без переопределения остаётся общий
+   * текст с главной.
+   */
+  title?: string;
+  text?: string;
 }) {
   const invite = t.home.invite;
 
@@ -38,8 +51,8 @@ export function CtaBand({
         <div className="relative max-w-2xl">
           <Kicker tone="inverse">{invite.kicker}</Kicker>
 
-          <h2 className="text-h2 mt-4 text-white">{invite.title}</h2>
-          <p className="text-lead mt-4 text-white/70">{invite.text}</p>
+          <h2 className="text-h2 mt-4 text-white">{title ?? invite.title}</h2>
+          <p className="text-lead mt-4 text-white/70">{text ?? invite.text}</p>
 
           <div className="mt-9 flex flex-wrap gap-3">
             <Link

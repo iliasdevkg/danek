@@ -301,7 +301,13 @@ export default async function ProgramsPage({ params }: PageProps<"/[locale]/prog
         </div>
       </section>
 
-      <CtaBand locale={locale} t={t} contacts={contacts} />
+      <CtaBand
+        locale={locale}
+        t={t}
+        contacts={contacts}
+        title={page.ctaTitle}
+        text={page.ctaText}
+      />
     </>
   );
 }

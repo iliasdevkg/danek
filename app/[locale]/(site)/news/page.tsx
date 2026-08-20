@@ -163,7 +163,13 @@ export default async function NewsPage({ params }: PageProps<"/[locale]/news">) 
         </section>
       )}
 
-      <CtaBand locale={locale} t={t} contacts={contacts} />
+      <CtaBand
+        locale={locale}
+        t={t}
+        contacts={contacts}
+        title={page.ctaTitle}
+        text={page.ctaText}
+      />
     </>
   );
 }

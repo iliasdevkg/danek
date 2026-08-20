@@ -418,6 +418,9 @@ export const en: Dictionary = {
       "Meals, sport, clubs, olympiads and seminars for parents are part of an ordinary week, not a once-a-term event.",
     lifeImageAlt: "A seminar for parents at the school",
     galleryCta: "See the school",
+    ctaTitle: "Better to see it once",
+    ctaText:
+      "We will show you the classrooms, the canteen and the pitch, and introduce the teachers. Come at a time that suits you.",
   },
 
   programsPage: {
@@ -464,6 +467,9 @@ export const en: Dictionary = {
     experienceOne: "{n} year in the profession",
     experienceFew: "{n} years in the profession",
     experienceMany: "{n} years in the profession",
+    ctaTitle: "Meet them in person",
+    ctaText:
+      "At a visit you speak with the people who will teach your child — more honest than any page.",
   },
 
   tuitionPage: {
@@ -529,6 +535,8 @@ export const en: Dictionary = {
     empty: "The first stories arrive with the school year.",
     backToList: "All news",
     published: "Published",
+    ctaTitle: "Would you like to see it for yourself?",
+    ctaText: "Olympiads, tournaments and celebrations are easier to see once than to read about.",
   },
 
   galleryPage: {
@@ -540,6 +548,8 @@ export const en: Dictionary = {
     photosCount: "{n} photos",
     photosCountOne: "{n} photo",
     openAlbum: "Open album",
+    ctaTitle: "Photographs do not carry the smell of the canteen",
+    ctaText: "Come on an ordinary school day and see the school as it really is.",
   },
 
   contactsPage: {

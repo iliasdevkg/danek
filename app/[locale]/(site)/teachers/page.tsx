@@ -162,7 +162,13 @@ export default async function TeachersPage({ params }: PageProps<"/[locale]/teac
         </div>
       </section>
 
-      <CtaBand locale={locale} t={t} contacts={contacts} />
+      <CtaBand
+        locale={locale}
+        t={t}
+        contacts={contacts}
+        title={page.ctaTitle}
+        text={page.ctaText}
+      />
     </>
   );
 }
