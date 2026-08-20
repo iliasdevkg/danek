@@ -52,7 +52,7 @@ export function HomeHero({
 
       <div className="shell grid items-center gap-12 pt-12 md:pt-16 lg:grid-cols-12 lg:gap-10 lg:pt-20">
         {/* ------------------------------------------------------------ Текст */}
-        <div className="lg:col-span-6">
+        <div className="lg:col-span-7">
           <p
             className="border-gold/35 bg-gold-soft text-caption text-highlight inline-flex animate-[rise_600ms_var(--ease-entrance)_both] items-center gap-2 rounded-full border px-3.5 py-1.5 font-semibold"
             style={{ animationDelay: "40ms" }}
@@ -84,8 +84,10 @@ export function HomeHero({
             {hero.lead}
           </p>
 
+          {/* На узком экране кнопки идут в столбик во всю ширину — так по ним
+              проще попасть большим пальцем; с 400px они помещаются в строку. */}
           <div
-            className="mt-9 flex animate-[rise_600ms_var(--ease-entrance)_both] flex-wrap gap-3"
+            className="mt-9 flex animate-[rise_600ms_var(--ease-entrance)_both] flex-col gap-3 min-[400px]:flex-row min-[400px]:flex-wrap"
             style={{ animationDelay: "250ms" }}
           >
             <Link
@@ -119,7 +121,7 @@ export function HomeHero({
         </div>
 
         {/* ------------------------------------------------------ Фотография */}
-        <div className="lg:col-span-6 lg:pl-6">
+        <div className="lg:col-span-5 lg:pl-4">
           <div
             className="relative mx-auto max-w-md animate-[rise_800ms_var(--ease-entrance)_both] lg:mr-0 lg:max-w-none"
             style={{ animationDelay: "150ms" }}

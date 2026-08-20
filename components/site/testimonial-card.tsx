@@ -9,7 +9,7 @@ import { Quote } from "lucide-react";
  */
 export function TestimonialCard({ text, author }: { text: string; author: string }) {
   return (
-    <figure className="card reveal relative flex h-full flex-col gap-5 p-7 md:p-8">
+    <figure className="card reveal relative flex flex-col gap-5 p-7">
       <Quote aria-hidden="true" className="text-accent-soft absolute top-6 right-6 size-10" />
 
       <blockquote className="text-body text-ink relative flex-1">{text}</blockquote>

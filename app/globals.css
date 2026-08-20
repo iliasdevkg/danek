@@ -205,25 +205,35 @@
   --shadow-raised: var(--shadow-lg);
   --shadow-float: var(--shadow-xl);
 
-  /* Текучая типографика: одна формула вместо брейкпоинт-лесенки. */
-  --text-display: clamp(2.5rem, 1.35rem + 5.1vw, 5rem);
-  --text-display--line-height: 1.03;
-  --text-display--letter-spacing: -0.035em;
+  /*
+   * Текучая типографика: одна формула вместо брейкпоинт-лесенки.
+   *
+   * Шкала намеренно контрастная — между заголовком раздела и основным текстом
+   * разрыв почти втрое. Ровная шкала выглядит аккуратной, но глазу не за что
+   * зацепиться, и страница превращается в сплошное серое полотно. Крупный
+   * кегль здесь работает вместо украшений.
+   *
+   * Трекинг сжимается по мере роста кегля: межбуквенное расстояние, нормальное
+   * для текста в десять пунктов, на заголовке в сто выглядит разболтанным.
+   */
+  --text-display: clamp(2.75rem, 1.15rem + 7.1vw, 6rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.045em;
   --text-display--font-weight: 800;
 
-  --text-h1: clamp(2rem, 1.25rem + 3.2vw, 3.5rem);
-  --text-h1--line-height: 1.08;
-  --text-h1--letter-spacing: -0.03em;
+  --text-h1: clamp(2.125rem, 1.2rem + 4vw, 4rem);
+  --text-h1--line-height: 1.04;
+  --text-h1--letter-spacing: -0.038em;
   --text-h1--font-weight: 800;
 
-  --text-h2: clamp(1.625rem, 1.15rem + 2.1vw, 2.625rem);
-  --text-h2--line-height: 1.14;
-  --text-h2--letter-spacing: -0.026em;
+  --text-h2: clamp(1.75rem, 1.05rem + 3.1vw, 3.25rem);
+  --text-h2--line-height: 1.08;
+  --text-h2--letter-spacing: -0.035em;
   --text-h2--font-weight: 800;
 
-  --text-h3: clamp(1.1875rem, 1.05rem + 0.65vw, 1.5rem);
-  --text-h3--line-height: 1.26;
-  --text-h3--letter-spacing: -0.018em;
+  --text-h3: clamp(1.1875rem, 1.03rem + 0.78vw, 1.5625rem);
+  --text-h3--line-height: 1.22;
+  --text-h3--letter-spacing: -0.022em;
   --text-h3--font-weight: 700;
 
   --text-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
@@ -570,18 +580,34 @@
 
 /* Вертикальный ритм разделов. Одна утилита вместо `pt-24 md:pt-32` в каждом
    втором блоке — правка ритма всего сайта живёт в одном месте. */
+/*
+ * Вертикальный ритм разделов.
+ *
+ * На телефоне отступы заметно меньше, чем на десктопе, и это не экономия
+ * ради экономии: одни и те же 96px, которые на широком экране читаются как
+ * воздух между главами, на 390px превращаются в пустой экран, который
+ * приходится пролистывать вслепую. Страница и без того длинная.
+ */
 @utility section-y {
-  padding-block: --spacing(16);
+  padding-block: --spacing(12);
 
-  @media (width >= 48rem) {
+  @media (width >= 40rem) {
+    padding-block: --spacing(16);
+  }
+
+  @media (width >= 64rem) {
     padding-block: --spacing(24);
   }
 }
 
 @utility section-t {
-  padding-top: --spacing(16);
+  padding-top: --spacing(12);
 
-  @media (width >= 48rem) {
+  @media (width >= 40rem) {
+    padding-top: --spacing(16);
+  }
+
+  @media (width >= 64rem) {
     padding-top: --spacing(24);
   }
 }
@@ -708,6 +734,19 @@
     transparent
   );
   filter: blur(8px);
+}
+
+/*
+ * Тонированная подложка раздела.
+ *
+ * Нужна ради ритма. Когда все разделы стоят на белом, страница читается как
+ * одна бесконечная лента и глазу негде передохнуть; чередование белого,
+ * тонированного и тёмного само разбивает её на главы, не добавляя ни рамок,
+ * ни разделителей. Подложка вытянута на всю ширину окна, а содержимое внутри
+ * остаётся в общей колонке.
+ */
+@utility surface-tint {
+  background-color: var(--paper-tint);
 }
 
 /*

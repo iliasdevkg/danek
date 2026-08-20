@@ -9,6 +9,7 @@ import {
   ListChecks,
   Medal,
   MessagesSquare,
+  Quote,
   Sparkles,
   UserRoundCheck,
   Users,
@@ -194,34 +195,41 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       </section>
 
       {/* ---------------------------------------------------------- Программы */}
-      <section className="shell section-t">
-        <SectionHeader
-          kicker={home.programs.kicker}
-          title={home.programs.title}
-          lead={home.programs.lead}
-          action={
-            <Link
-              href={routes.programs(locale)}
-              className={buttonVariants({ variant: "secondary" })}
-            >
-              {home.programs.cta}
-            </Link>
-          }
-        />
+      {/*
+       * Чередование подложек задаёт странице главы: белое — тонированное —
+       * белое — тёмное. Без него десять разделов подряд на белом сливаются
+       * в одну ленту, и понять, где закончилась мысль, можно только по тексту.
+       */}
+      <section className="surface-tint section-y">
+        <div className="shell">
+          <SectionHeader
+            kicker={home.programs.kicker}
+            title={home.programs.title}
+            lead={home.programs.lead}
+            action={
+              <Link
+                href={routes.programs(locale)}
+                className={buttonVariants({ variant: "secondary" })}
+              >
+                {home.programs.cta}
+              </Link>
+            }
+          />
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {stages.map((stage) => (
-            <ProgramCard
-              key={stage.title}
-              grades={stage.grades}
-              title={stage.title}
-              text={stage.text}
-              image={stage.image}
-              imageAlt={stage.imageAlt}
-              href={stage.href}
-              more={home.programs.more}
-            />
-          ))}
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {stages.map((stage) => (
+              <ProgramCard
+                key={stage.title}
+                grades={stage.grades}
+                title={stage.title}
+                text={stage.text}
+                image={stage.image}
+                imageAlt={stage.imageAlt}
+                href={stage.href}
+                more={home.programs.more}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -231,32 +239,51 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       </div>
 
       {/* ----------------------------------------------------------- Принципы */}
-      <section className="shell section-t">
-        <SectionHeader
-          kicker={home.principles.kicker}
-          title={home.principles.title}
-          align="center"
-        />
+      {/*
+       * Раздел намеренно свёрстан не карточками, а списком.
+       *
+       * Выше по странице уже трижды подряд идёт сетка карточек — преимущества,
+       * ступени, мозаика. Четвёртая читалась бы как продолжение предыдущей,
+       * и глаз переставал бы различать, где кончается один разговор и
+       * начинается другой. Здесь вместо рамок работают крупная цифра,
+       * волосяная линейка и воздух: тот же материал, другая интонация.
+       *
+       * Заголовок стоит слева и не уезжает при прокрутке на узких экранах —
+       * `lg:sticky` включается только там, где рядом с ним есть что листать.
+       */}
+      <section className="surface-tint section-y">
+        <div className="shell grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-4">
+            <div className="lg:sticky lg:top-28">
+              <Kicker>{home.principles.kicker}</Kicker>
+              <h2 className="text-h2 text-ink mt-4">{home.principles.title}</h2>
+            </div>
+          </div>
 
-        <ol className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {principles.map((item, index) => (
-            <li key={item.title} className="card hover-lift reveal group relative p-7">
-              <span
-                aria-hidden="true"
-                className="font-display text-h2 text-accent-soft absolute top-6 right-7 leading-none tabular-nums"
+          <ol className="lg:col-span-7 lg:col-start-6">
+            {principles.map((item, index) => (
+              <li
+                key={item.title}
+                className="reveal-sm border-rule group flex gap-5 border-b py-7 first:border-t sm:gap-8"
               >
-                {String(index + 1).padStart(2, "0")}
-              </span>
+                <span
+                  aria-hidden="true"
+                  className="font-display text-ink-faint/45 group-hover:text-gold w-12 shrink-0 text-[2.5rem] leading-none tabular-nums transition-colors duration-[320ms] sm:w-16 sm:text-[3.25rem]"
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </span>
 
-              <span className="icon-tile group-hover:bg-accent transition-colors duration-[240ms] group-hover:text-white">
-                <item.icon className="size-5" aria-hidden="true" />
-              </span>
-
-              <h3 className="text-h3 text-ink mt-5 max-w-[85%]">{item.title}</h3>
-              <p className="text-small text-ink-muted mt-2.5">{item.text}</p>
-            </li>
-          ))}
-        </ol>
+                <div className="flex-1">
+                  <h3 className="text-h3 text-ink flex items-start gap-3">
+                    <item.icon className="text-brand mt-1 size-5 shrink-0" aria-hidden="true" />
+                    {item.title}
+                  </h3>
+                  <p className="text-small text-ink-muted mt-2.5">{item.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
 
       {/* -------------------------------------------------------- Жизнь школы */}
@@ -343,18 +370,47 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       ) : null}
 
       {/* -------------------------------------------------------------- Отзывы */}
+      {/*
+       * Первый отзыв набран крупно и стоит один, остальные — рядом помельче.
+       *
+       * Три равные карточки заставляют читать все три или не читать ни одной:
+       * взгляд не знает, с какой начать. Здесь порядок задан размером —
+       * сначала одна фраза, набранная так, что её нельзя пропустить, потом
+       * два подтверждения. Это тот же материал, но прочитанным оказывается
+       * хотя бы первый.
+       */}
       <section className="shell section-t">
         <SectionHeader
           kicker={home.testimonials.kicker}
           title={home.testimonials.title}
           lead={home.testimonials.lead}
-          align="center"
         />
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {testimonials.map((item) => (
-            <TestimonialCard key={item.author} text={item.text} author={item.author} />
-          ))}
+        <div className="mt-12 grid items-start gap-6 lg:grid-cols-12">
+          {/* Крупная цитата стоит на золотой подложке: это единственное место
+              на странице, где золото красит не действие, а слово родителя —
+              и потому не спорит с кнопкой «Подать заявку». */}
+          <figure className="reveal border-gold/25 bg-gold-soft/45 relative flex flex-col gap-8 rounded-2xl border p-8 lg:col-span-7 lg:p-12">
+            <Quote
+              aria-hidden="true"
+              className="text-gold/25 absolute top-8 right-8 size-20 lg:size-28"
+            />
+            <blockquote className="font-display text-ink relative pr-14 text-[clamp(1.375rem,1rem+1.5vw,2rem)] leading-[1.25] font-bold tracking-[-0.03em] lg:pr-24">
+              {testimonials[0].text}
+            </blockquote>
+            <figcaption className="border-gold/20 flex items-center gap-3 border-t pt-6">
+              <span aria-hidden="true" className="bg-gold h-px w-8 shrink-0" />
+              <span className="text-small text-ink-muted font-semibold">
+                {testimonials[0].author}
+              </span>
+            </figcaption>
+          </figure>
+
+          <div className="grid gap-6 lg:col-span-5">
+            {testimonials.slice(1).map((item) => (
+              <TestimonialCard key={item.author} text={item.text} author={item.author} />
+            ))}
+          </div>
         </div>
       </section>
 
