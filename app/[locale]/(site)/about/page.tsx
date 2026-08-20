@@ -48,23 +48,17 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
 
   return (
     <>
-      <PageHero locale={locale} t={t} kicker={a.kicker} title={a.title} lead={a.lead} />
+      <PageHero
+        locale={locale}
+        t={t}
+        kicker={a.kicker}
+        title={a.title}
+        lead={a.lead}
+        image={STOCK_IMAGES.aboutCampus}
+        imageAlt={a.campusImageAlt}
+      />
 
       {/* --------------------------------------------------------- Территория */}
-      {/* Первый экран после шапки — сама школа, а не текст о ней: родитель,
-          который открыл раздел «О школе», хочет сначала увидеть место.
-          Кадр верхний, поэтому грузится приоритетно и без анимации входа. */}
-      <section className="shell pt-10 md:pt-14">
-        <figure className="bg-paper-sunken shadow-card relative aspect-4/3 w-full overflow-hidden rounded-2xl sm:aspect-video lg:aspect-21/9">
-          <Photo
-            src={STOCK_IMAGES.aboutCampus}
-            alt={a.campusImageAlt}
-            priority
-            sizes="(min-width: 1280px) 1216px, 100vw"
-          />
-        </figure>
-      </section>
-
       {/* ------------------------------------------------------------- Миссия */}
       <section className="shell section-t">
         <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-14">
@@ -87,7 +81,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
             </Link>
           </div>
 
-          {/* Коллаж зеркален главной: там арка слева, здесь справа. Порядок в
+          {/* Коллаж зеркален главной: там кадр слева, здесь справа. Порядок в
               разметке — текст первым, поэтому на телефоне читатель получает
               сначала мысль, а потом иллюстрацию к ней. */}
           <div className="relative lg:col-span-5 lg:col-start-8">

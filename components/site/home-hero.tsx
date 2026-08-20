@@ -93,7 +93,11 @@ export function HomeHero({
           <div className="fx-in mt-10 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:flex-wrap">
             <Link
               href={routes.admission(locale)}
-              className={buttonVariants({ variant: "gold", size: "lg", className: "group" })}
+              className={buttonVariants({
+                variant: "gold",
+                size: "lg",
+                className: "group btn-glow",
+              })}
             >
               {hero.ctaPrimary}
               <ArrowRight

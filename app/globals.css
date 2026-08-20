@@ -1077,6 +1077,65 @@
 }
 
 /*
+ * Шапка витрины: матовое стекло вместо сплошной заливки.
+ *
+ * Под шапкой едет фотография во весь экран, и непрозрачная полоса резала бы
+ * кадр пополам. Размытие оставляет снимок читаемым и при этом отделяет меню
+ * от него — тот самый эффект «стекла», ради которого приём и придуман.
+ *
+ * `backdrop-filter` стоит дорого: браузер размывает всё, что под элементом,
+ * на каждом кадре прокрутки. Поэтому он живёт только на полосе в пять
+ * сантиметров высотой и включается лишь там, где поддержан; где нет —
+ * остаётся плотная заливка, и меню всё равно читается.
+ */
+[data-surface="cinema"] .site-header-surface::before {
+  background-color: color-mix(in oklab, var(--paper) 72%, transparent);
+  border-bottom-color: var(--rule);
+  box-shadow: none;
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  [data-surface="cinema"] .site-header-surface::before {
+    backdrop-filter: blur(16px) saturate(1.4);
+  }
+}
+
+/*
+ * Микро-отклик кнопки.
+ *
+ * Свечение по краю вместо подъёма: на тёмном фоне сдвиг вверх читается как
+ * дрожь, а мягкий ореол — как «кнопка ожила». Анимируется только тень,
+ * то есть работа композитора, и ни одного пересчёта раскладки.
+ */
+@media (hover: hover) {
+  [data-surface="cinema"] .btn-glow:hover {
+    box-shadow:
+      0 0 0 1px var(--accent-soft),
+      0 8px 32px -8px color-mix(in oklab, var(--accent) 45%, transparent);
+  }
+}
+
+/*
+ * Ссылка с подчёркиванием, которое выезжает из-под текста.
+ *
+ * `background-size` по одной оси — это не свойство раскладки, поэтому
+ * подчёркивание доезжает без единого пересчёта геометрии строки.
+ */
+@utility link-underline {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size var(--dur-base) var(--ease-entrance);
+
+  @media (hover: hover) {
+    &:hover {
+      background-size: 100% 1px;
+    }
+  }
+}
+
+/*
  * Карточка на тёмной витрине.
  *
  * Тень на почти чёрном не работает: её попросту не видно, и карточка

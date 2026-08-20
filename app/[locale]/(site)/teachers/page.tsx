@@ -63,14 +63,24 @@ export default async function TeachersPage({ params }: PageProps<"/[locale]/teac
 
   return (
     <>
-      <PageHero locale={locale} t={t} kicker={page.kicker} title={page.title} lead={page.lead} />
+      <PageHero
+        locale={locale}
+        t={t}
+        kicker={page.kicker}
+        title={page.title}
+        lead={page.lead}
+        image={STOCK_IMAGES.teachersBanner}
+        imageAlt={page.bannerAlt}
+      />
 
       {/* ------------------------------------------------------------- Баннер */}
       <section className="shell pt-10 md:pt-14">
         <figure className="bg-paper-sunken shadow-raised relative aspect-4/3 w-full overflow-hidden rounded-2xl sm:aspect-video lg:aspect-21/9">
-          {/* Первая крупная картинка страницы и её LCP — грузится без очереди. */}
+          {/* Кадр намеренно другой, чем в шапке: тот показывает класс целиком,
+              этот — работу один на один, ради которой раздел и существует.
+              Повтор одной фотографии дважды подряд читается как недосмотр. */}
           <Photo
-            src={STOCK_IMAGES.teachersBanner}
+            src={STOCK_IMAGES.lifeReading}
             alt={page.bannerAlt}
             priority
             sizes="(min-width: 1280px) 1216px, 92vw"

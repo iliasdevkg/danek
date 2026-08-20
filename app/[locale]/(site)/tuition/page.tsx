@@ -177,7 +177,15 @@ export default async function TuitionPage({ params }: PageProps<"/[locale]/tuiti
 
   return (
     <>
-      <PageHero locale={locale} t={t} kicker={page.kicker} title={page.title} lead={page.lead} />
+      <PageHero
+        locale={locale}
+        t={t}
+        kicker={page.kicker}
+        title={page.title}
+        lead={page.lead}
+        image={STOCK_IMAGES.lifeStudy}
+        imageAlt={page.includedImageAlt}
+      />
 
       {/* --------------------------------------------------------------- Прайс */}
       {plans.length > 0 ? (

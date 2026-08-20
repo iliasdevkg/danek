@@ -5,7 +5,6 @@ import { Clock, ExternalLink, Mail, MapPin, Phone } from "lucide-react";
 import { ApplyForm } from "@/components/site/apply-form";
 import { CtaBand } from "@/components/site/cta-band";
 import { PageHero } from "@/components/site/page-hero";
-import { Photo } from "@/components/site/photo";
 import { SectionHeader } from "@/components/site/section-header";
 import { socialLinks } from "@/components/site/social-icons";
 import { buttonVariants } from "@/components/ui/button";
@@ -77,25 +76,8 @@ export default async function ContactsPage({ params }: PageProps<"/[locale]/cont
         kicker={page.kicker}
         title={page.title}
         lead={page.lead}
-        aside={
-          // Единственная арка страницы. Родитель, который ищет дорогу, должен
-          // сначала увидеть место, куда едет, — по фотографии школу узнают
-          // с улицы быстрее, чем по адресу.
-          //
-          // Пропорция портретная, как у всех арок сайта: купол в 999px
-          // схлопывается по ширине элемента, и на широком кадре он съедает
-          // почти всю высоту — знак школы перестаёт читаться как арка.
-          // Короткой шапку на телефоне держит ширина, а не пропорция:
-          // 176px вместо всей колонки — телефон школы виден почти сразу.
-          <figure className="bg-paper-sunken shadow-raised relative aspect-4/5 w-44 overflow-hidden rounded-xs sm:w-52 lg:ml-auto lg:w-full lg:max-w-[17rem]">
-            <Photo
-              src={STOCK_IMAGES.aboutCampus}
-              alt={page.imageAlt}
-              priority
-              sizes="(min-width: 1024px) 272px, (min-width: 640px) 208px, 176px"
-            />
-          </figure>
-        }
+        image={STOCK_IMAGES.aboutCampus}
+        imageAlt={page.imageAlt}
       />
 
       {/* ---------------------------------------------- Связаться и написать */}

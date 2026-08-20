@@ -44,7 +44,11 @@ export function CtaBand({
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
               href={routes.admission(locale)}
-              className={buttonVariants({ variant: "gold", size: "lg", className: "group" })}
+              className={buttonVariants({
+                variant: "gold",
+                size: "lg",
+                className: "group btn-glow",
+              })}
             >
               {invite.action}
               <ArrowRight

@@ -111,6 +111,8 @@ export default async function ProgramsPage({ params }: PageProps<"/[locale]/prog
         kicker={p.kicker}
         title={p.title}
         lead={p.lead}
+        image={STOCK_IMAGES.programsMiddle}
+        imageAlt={page.prepImageAlt}
         aside={
           // Страница длинная и состоит из трёх почти равных разворотов —
           // без якорей родитель, которому нужен конкретный класс, скроллит

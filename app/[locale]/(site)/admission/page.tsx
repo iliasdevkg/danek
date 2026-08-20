@@ -62,6 +62,8 @@ export default async function AdmissionPage({ params }: PageProps<"/[locale]/adm
         kicker={a.kicker}
         title={a.title}
         lead={a.lead}
+        image={STOCK_IMAGES.homeHeroKids}
+        imageAlt={a.tryImageAlt}
         aside={
           contacts.phonePrimary ? (
             <div className="card shadow-raised p-6">
