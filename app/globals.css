@@ -1328,21 +1328,82 @@
 /*
  * Горизонтальная лента, которую двигает вертикальная прокрутка.
  *
- * Родитель задаёт высоту в несколько экранов и держит внутри `sticky`-кадр;
- * дорожка внутри едет влево ровно на свою длину минус ширину окна. Приём
- * узнаваемый и почти всегда делается на JS с обработчиком скролла — здесь
- * это три строки CSS и ноль килобайт.
+ * Приём узнаваемый и почти всегда делается на JS с обработчиком scroll —
+ * здесь это две утилиты и ноль килобайт.
+ *
+ * Устройство: внешний блок высотой в несколько экранов объявляет именованный
+ * таймлайн, внутри него `sticky`-кадр держит ленту в поле зрения, а сама
+ * лента едет влево ровно на свою длину минус ширину окна.
+ *
+ * Диапазон `contain` выбран не случайно: это ровно тот отрезок прокрутки,
+ * когда высокий блок полностью накрывает окно, то есть когда кадр и правда
+ * приклеен. Возьми мы `cover`, лента начинала бы ехать ещё на подлёте и
+ * заканчивала уже уехав — половина движения прошла бы мимо глаз.
  */
+@utility fx-strip {
+  view-timeline-name: --strip;
+  view-timeline-axis: block;
+}
+
 @utility fx-track {
   display: flex;
   width: max-content;
 
-  @supports (animation-timeline: scroll()) {
+  @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
       animation: fx-track-x linear both;
-      animation-timeline: scroll(nearest);
+      animation-timeline: --strip;
+      animation-range: contain 0% contain 100%;
       will-change: transform;
     }
+  }
+}
+
+/*
+ * Счётчик, который досчитывает при прокрутке.
+ *
+ * Число живёт в переменной, объявленной через `@property` как целое, —
+ * только тогда браузер умеет её интерполировать. Показывает его `counter()`,
+ * поэтому в разметке нет ни одного узла, который пришлось бы менять из JS,
+ * и нет ни одного пересчёта раскладки: меняется только содержимое
+ * псевдоэлемента.
+ *
+ * Значение задаёт разметка через `--to`. Где scroll-driven не поддержан,
+ * счётчик просто стоит на конечном числе.
+ */
+@property --count {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: false;
+}
+
+@keyframes fx-count {
+  from {
+    --count: 0;
+  }
+  to {
+    --count: var(--to);
+  }
+}
+
+@utility fx-counter {
+  counter-reset: n var(--count);
+
+  &::after {
+    content: counter(n);
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: fx-count linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 40%;
+    }
+  }
+
+  /* Без поддержки — сразу конечное число, а не ноль. */
+  @supports not (animation-timeline: view()) {
+    --count: var(--to);
   }
 }
 

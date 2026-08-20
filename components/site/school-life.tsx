@@ -1,116 +1,117 @@
 import { Photo } from "@/components/site/photo";
 import { STOCK_IMAGES, type ImageSource } from "@/lib/content/stock-images";
 import type { Dictionary } from "@/lib/i18n/dictionaries/ru";
-import { cn } from "@/lib/utils";
 
-type Tile = {
-  title: string;
-  text: string;
-  alt: string;
-  image: ImageSource;
-  /** Место в мозаике на широком экране. */
-  area: string;
-};
+type Frame = { title: string; text: string; alt: string; image: ImageSource };
 
 /**
- * Мозаика школьной жизни.
+ * Школьная жизнь — горизонтальная лента, которую двигает вертикальная прокрутка.
  *
- * Четыре кадра разного размера вместо ровной сетки: неравные плитки читаются
- * как живая доска с фотографиями, а не как каталог. Крупная плитка достаётся
- * питанию — это первое, о чём спрашивают родители младших классов.
+ * Раньше здесь была мозаика из четырёх плиток. Она работала, но оставалась
+ * ещё одной сеткой карточек на странице, где их и без того много. Лента
+ * читается иначе: кадр за кадром, как проход по школе, и держит внимание,
+ * пока прокрутка идёт вниз, а картинка идёт вбок.
  *
- * На телефоне мозаика распрямляется в колонку одинаковых карточек: на 375px
- * «крупная» плитка всё равно занимает всю ширину, и разница в размере теряет
- * смысл, а вот одинаковый ритм — нет.
+ * Ни одного обработчика прокрутки: внешний блок объявляет именованный
+ * таймлайн, лента к нему привязана, движение считает браузер в композиторе.
+ * Где scroll-driven не поддержан, лента остаётся обычной горизонтальной
+ * прокруткой пальцем — приём деградирует в свою же честную основу.
+ *
+ * На телефоне высокий блок с приклеенным кадром неуместен: там лента просто
+ * листается пальцем, а вертикальная прокрутка остаётся вертикальной.
  */
 export function SchoolLife({ t }: { t: Dictionary }) {
   const life = t.home.life;
 
-  const tiles: Tile[] = [
+  const frames: Frame[] = [
     {
       title: life.mealsTitle,
       text: life.mealsText,
       alt: life.mealsAlt,
       image: STOCK_IMAGES.lifeMeals,
-      area: "lg:col-span-2 lg:row-span-2",
     },
     {
       title: life.sportTitle,
       text: life.sportText,
       alt: life.sportAlt,
       image: STOCK_IMAGES.lifeFootball,
-      area: "lg:col-span-2",
     },
     {
       title: life.clubsTitle,
       text: life.clubsText,
       alt: life.clubsAlt,
       image: STOCK_IMAGES.lifeArt,
-      area: "lg:col-span-1",
     },
     {
       title: life.eventsTitle,
       text: life.eventsText,
       alt: life.eventsAlt,
       image: STOCK_IMAGES.lifeCelebration,
-      area: "lg:col-span-1",
+    },
+    {
+      title: life.sportTitle,
+      text: life.sportText,
+      alt: life.sportAlt,
+      image: STOCK_IMAGES.lifeBasketball,
+    },
+    {
+      title: life.clubsTitle,
+      text: life.clubsText,
+      alt: life.clubsAlt,
+      image: STOCK_IMAGES.lifeReading,
     },
   ];
 
   return (
-    <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:h-[36rem] lg:grid-cols-4 lg:grid-rows-2">
-      {tiles.map((tile) => (
-        <article
-          key={tile.title}
-          className={cn(
-            "fx-in group bg-paper-sunken shadow-card relative overflow-hidden rounded-2xl",
-            /*
-             * `w-full` здесь обязателен, а не для красоты.
-             *
-             * Пара `aspect-ratio` + `min-height` без заданной ширины считается
-             * в обратную сторону: браузер берёт минимальную высоту, умножает на
-             * соотношение и получает ШИРИНУ — 16rem × 4/3 = 341px, что шире
-             * всей колонки на телефоне в 320px. Плитка вылезала за экран и
-             * тянула за собой горизонтальную прокрутку всей страницы.
-             * Явная ширина делает её определённой, и соотношение считает уже
-             * высоту, как и задумано.
-             */
-            "aspect-4/3 w-full min-w-0 sm:aspect-auto sm:min-h-72 lg:aspect-auto lg:min-h-0",
-            tile.area,
-          )}
-        >
-          <Photo
-            src={tile.image}
-            alt={tile.alt}
-            zoom
-            sizes="(min-width: 1024px) 45vw, (min-width: 640px) 50vw, 92vw"
-          />
+    <>
+      {/* Телефон и планшет: обычная лента, листается пальцем. */}
+      <div className="mt-10 lg:hidden">
+        <ul className="app-scroll -mx-5 flex snap-x snap-mandatory [scrollbar-width:none] gap-4 overflow-x-auto px-5 pb-4">
+          {frames.slice(0, 4).map((frame, index) => (
+            <li key={index} className="w-[78vw] shrink-0 snap-start sm:w-[52vw]">
+              <FrameCard frame={frame} />
+            </li>
+          ))}
+        </ul>
+      </div>
 
-          {/* Затемнение снизу: подпись обязана читаться на любом кадре,
-              включая светлое фото еды. Градиент, а не сплошная плашка —
-              верх фотографии остаётся чистым. */}
-          <div
-            aria-hidden="true"
-            className="from-band via-band/45 absolute inset-0 bg-gradient-to-t to-transparent"
-          />
+      {/* Десктоп: высокий блок, приклеенный кадр, лента едет вбок. */}
+      <div className="fx-strip mt-12 hidden h-[320vh] lg:block">
+        <div className="sticky top-0 flex h-svh items-center overflow-hidden">
+          <ul className="fx-track gap-6 px-[max(2rem,calc((100vw-1280px)/2))]">
+            {frames.map((frame, index) => (
+              <li key={index} className="w-[34vw] max-w-[30rem] shrink-0">
+                <FrameCard frame={frame} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </>
+  );
+}
 
-          {/*
-           * Пояснение видно всегда, а не раскрывается по наведению.
-           *
-           * Раскрытие выглядело эффектно, но стоило дорого во всех смыслах:
-           * оно росло через max-height — свойство раскладки, то есть каждый
-           * кадр наведения заставлял браузер пересчитывать геометрию плитки,
-           * — и при этом было полностью недоступно с телефона, где наведения
-           * не существует. Ради анимации, которую увидит меньшая часть
-           * посетителей, прятать от большей то, ради чего она сюда смотрит,
-           * — плохой размен. Плитки увеличены, текст помещается целиком.
-           */}
-          <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
-            <h3 className="text-h3 text-white">{tile.title}</h3>
-            <p className="text-small mt-2 max-w-md text-white/75">{tile.text}</p>
-          </div>
-        </article>
-      ))}
-    </div>
+function FrameCard({ frame }: { frame: Frame }) {
+  return (
+    <figure className="group bg-paper-sunken relative aspect-4/5 w-full overflow-hidden rounded-xs">
+      <Photo
+        src={frame.image}
+        alt={frame.alt}
+        zoom
+        sizes="(min-width: 1024px) 34vw, (min-width: 640px) 52vw, 78vw"
+      />
+
+      {/* Затемнение снизу: подпись обязана читаться на любом кадре, включая
+          светлое фото еды. Градиент, а не плашка — верх снимка остаётся чистым. */}
+      <div
+        aria-hidden="true"
+        className="from-band via-band/40 absolute inset-0 bg-gradient-to-t to-transparent"
+      />
+
+      <figcaption className="absolute inset-x-0 bottom-0 p-6 md:p-7">
+        <h3 className="text-h3 text-white">{frame.title}</h3>
+        <p className="text-small mt-2 text-white/70">{frame.text}</p>
+      </figcaption>
+    </figure>
   );
 }

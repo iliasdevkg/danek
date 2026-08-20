@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Award } from "lucide-react";
+import type { CSSProperties } from "react";
 
 import { Photo } from "@/components/site/photo";
 import { buttonVariants } from "@/components/ui/button";
@@ -26,6 +27,11 @@ import { routes } from "@/lib/routes";
  * следующий раздел. Считает это сама прокрутка (`animation-timeline: scroll()`),
  * поэтому ни одного обработчика в JS и ни одного пересчёта в главном потоке.
  */
+/** Целое число без единиц — только его имеет смысл досчитывать. */
+function countable(value: string): boolean {
+  return /^\d{1,6}$/.test(value.trim());
+}
+
 export function HomeHero({
   locale,
   t,
@@ -139,7 +145,24 @@ export function HomeHero({
                 className="fx-in border-rule flex flex-col gap-2 md:border-l md:px-6 md:first:border-l-0 md:first:pl-0"
               >
                 <dd className="metric text-h1 text-ink leading-none" data-numeric>
-                  {stat.value}
+                  {/*
+                   * Чистое число досчитывает при прокрутке, всё остальное
+                   * выводится как есть. Школа пишет в эту графу не только
+                   * «128», но и «1–10» или «6.5+» — досчитать такое нельзя,
+                   * а показать нужно, поэтому оживает лишь то, что оживает
+                   * корректно. Разбор — на сервере, в браузер уходит готовая
+                   * разметка.
+                   */}
+                  {countable(stat.value) ? (
+                    <span
+                      className="fx-counter"
+                      style={{ "--to": stat.value } as CSSProperties}
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    stat.value
+                  )}
+                  {countable(stat.value) ? <span className="sr-only">{stat.value}</span> : null}
                 </dd>
                 <dt className="text-small text-ink-muted">{pickI18n(stat.label, locale)}</dt>
               </div>

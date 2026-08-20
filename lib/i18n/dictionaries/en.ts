@@ -201,6 +201,14 @@ export const en: Dictionary = {
       eventsText:
         "School celebrations, concerts, days out and a graduation that children remember.",
       eventsAlt: "A school celebration",
+      libraryTitle: "Library and reading",
+      libraryText:
+        "We read from grade one — aloud, together and by choice, not from a summer list.",
+      libraryAlt: "A teacher reading a book together with a pupil",
+      campusTitle: "Our own campus",
+      campusText:
+        "Classrooms, a sports pitch and a yard — the school day happens on our own grounds.",
+      campusAlt: "The school building and its yard",
       cta: "See the gallery",
     },
 
