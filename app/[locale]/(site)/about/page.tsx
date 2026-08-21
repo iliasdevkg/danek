@@ -189,7 +189,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
             }
           />
 
-          <div className="teacher-grid mt-12 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
+          <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
             {teachers.map((teacher) => (
               <div key={teacher.id} className="fx-in">
                 <TeacherCard teacher={teacher} />

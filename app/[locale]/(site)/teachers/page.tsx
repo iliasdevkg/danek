@@ -108,7 +108,7 @@ export default async function TeachersPage({ params }: PageProps<"/[locale]/teac
         <h2 className="sr-only">{t.nav.teachers}</h2>
 
         {teachers.length > 0 ? (
-          <ul className="teacher-grid grid grid-cols-2 gap-x-5 gap-y-10 sm:gap-x-6 md:grid-cols-3 md:gap-x-8 md:gap-y-12 lg:grid-cols-4">
+          <ul className="grid grid-cols-2 gap-x-5 gap-y-10 sm:gap-x-6 md:grid-cols-3 md:gap-x-8 md:gap-y-12 lg:grid-cols-4">
             {teachers.map((teacher) => (
               <li key={teacher.id} className="fx-in">
                 <TeacherCard teacher={teacher} />

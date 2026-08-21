@@ -405,7 +405,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             label={t.common.showMore}
             visible={2}
             className="mt-8 sm:mt-12"
-            itemsClassName="teacher-grid grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4"
+            itemsClassName="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4"
           >
             {teachers.map((teacher) => (
               <div key={teacher.id} className="fx-in">

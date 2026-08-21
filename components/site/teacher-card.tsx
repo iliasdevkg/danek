@@ -5,15 +5,16 @@ import type { TeacherCard as Teacher } from "@/lib/content/teachers";
 /**
  * Карточка педагога.
  *
- * Портрет стоит в арке — форме с эмблемы школы, где росток заключён в круг.
- * Арки соседних карточек чуть разной высоты и упираются в одну землю: ряд
- * получает силуэт, а подписи всё равно остаются на одной линии. Механика
- * (слот фиксированной пропорции и доли высоты внутри него) расписана
- * в `.teacher-slot`, globals.css.
+ * Кадр прямоугольный, со скруглением в два пикселя — тем же, что у всех
+ * остальных снимков витрины. Круглые и арочные рамки отсюда убраны: мягкий
+ * угол читается как «детское», а этот сайт держится ровно на обратном.
  *
- * Нет фото — стоят инициалы на фирменном фоне, а не пустое место. Арка
- * при этом остаётся: колоннада не должна разваливаться из-за того, что
- * у одного человека снимок ещё не загружен.
+ * Все кадры одной пропорции и одного роста: ряд лиц должен читаться как ряд,
+ * а не как набор по-разному обрезанных снимков.
+ *
+ * Нет фото — стоят инициалы на фирменном фоне, а не пустое место: ряд не
+ * должен разваливаться из-за того, что у одного человека снимок ещё
+ * не загружен.
  *
  * Подпись выровнена по левому краю, а не по центру, и отчёркнута короткой
  * чертой. Центрированная подпись под фотографией — подпись из шаблона;
@@ -27,25 +28,23 @@ import type { TeacherCard as Teacher } from "@/lib/content/teachers";
 export function TeacherCard({ teacher }: { teacher: Teacher }) {
   return (
     <article className="group">
-      <div className="teacher-slot w-full">
-        <div className="arch bg-accent-soft shadow-card group-hover:shadow-raised relative w-full transition-shadow duration-[320ms]">
-          {teacher.photoUrl ? (
-            <Photo
-              src={teacher.photoUrl}
-              alt={teacher.fullName}
-              zoom
-              className="portrait-reveal"
-              sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 70vw"
-            />
-          ) : (
-            <span
-              aria-hidden="true"
-              className="font-display text-accent/35 grid size-full place-items-center text-5xl font-extrabold"
-            >
-              {initialsOf(teacher.fullName)}
-            </span>
-          )}
-        </div>
+      <div className="bg-accent-soft shadow-card group-hover:shadow-raised relative aspect-5/7 w-full overflow-hidden rounded-xs transition-shadow duration-[320ms]">
+        {teacher.photoUrl ? (
+          <Photo
+            src={teacher.photoUrl}
+            alt={teacher.fullName}
+            zoom
+            className="portrait-reveal"
+            sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 70vw"
+          />
+        ) : (
+          <span
+            aria-hidden="true"
+            className="font-display text-accent/35 grid size-full place-items-center text-5xl font-extrabold"
+          >
+            {initialsOf(teacher.fullName)}
+          </span>
+        )}
       </div>
 
       <div className="mt-4 flex items-start gap-2.5 sm:gap-3">

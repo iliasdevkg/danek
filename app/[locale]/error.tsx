@@ -113,7 +113,7 @@ export default function LocaleError({
 
               {/* 480px — ширина пяти колонок из двенадцати в контейнере 1280px;
                   ниже lg рамку ограничивает max-w-72. */}
-              <figure className="arch bg-paper-sunken shadow-raised relative aspect-4/5 w-full">
+              <figure className="bg-paper-sunken shadow-raised relative aspect-4/5 w-full overflow-hidden rounded-xs">
                 <Photo
                   src={STOCK_IMAGES.lifeReading}
                   alt={t.crashImageAlt}
